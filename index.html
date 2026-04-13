@@ -383,7 +383,7 @@
     <div class="nav-item" onclick="goPage('catatan')" data-page="catatan"><span class="nav-icon">✏️</span> Catatan <span class="nav-badge" id="badgeNote" style="display:none">0</span></div>
     <div class="nav-item" onclick="goPage('progress')" data-page="progress"><span class="nav-icon">📊</span> Progress</div>
   </div>
-  <div class="sidebar-footer">My Planner Task v3.0 · Firebase</div>
+  <div class="sidebar-footer">My Planner Task v4.0 · Supabase</div>
 </nav>
 
 <!-- BOTTOM NAV (mobile) -->
@@ -553,12 +553,15 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabaseUrl = 'https://jcyutinrusvbbimxuzaq.supabase.co'
-const supabaseKey = 'sb_publishable_hTWgcvcYamR2xdT4ZzdgzQ_JoJSpYug'
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+// ═══════════════════════════════
+// CONFIG SUPABASE
+// ═══════════════════════════════
+const SUPABASE_URL  = 'https://jcyutinrusvbbimxuzaq.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjeXV0aW5ydXN2YmJpbXh1emFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNTI0OTUsImV4cCI6MjA5MTYyODQ5NX0.WNKiQgMV-sq5yyyaf8TX4cgy76tn7vQMt-C-Uz06X30';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ═══════════════════════════════
 // KONSTANTA & STATE
@@ -590,7 +593,6 @@ window.addEventListener('load', () => {
   document.getElementById('topbarDate').textContent = now.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   document.getElementById('fDate').value = toDateStr(now);
 
-  // Color picker
   const cp = document.getElementById('colorPicker');
   TASK_COLORS.forEach(c => {
     const el = document.createElement('div');
@@ -599,7 +601,6 @@ window.addEventListener('load', () => {
     el.onclick = () => pickColor(c.hex, el); cp.appendChild(el);
   });
 
-  // Month selector catatan
   const nm = document.getElementById('nMonth');
   MONTHS_ID.forEach((m,i) => nm.add(new Option(m, i, i===now.getMonth(), i===now.getMonth())));
 
@@ -609,47 +610,57 @@ window.addEventListener('load', () => {
 });
 
 // ═══════════════════════════════
-// FIREBASE — LOAD DATA
+// SUPABASE — LOAD DATA
 // ═══════════════════════════════
 async function loadAll() {
   showLoader();
   try {
-    const [tasksSnap, notesSnap] = await Promise.all([
-      supabase.from('tasks').select('*').order('date'),
-      supabase.from('notes').select('*')
+    const [{ data: tasksData, error: tErr }, { data: notesData, error: nErr }] = await Promise.all([
+      db.from('tasks').select('*').order('date', { ascending: true }),
+      db.from('notes').select('*').order('month', { ascending: true })
     ]);
-    allTasks = tasksSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    allNotes = notesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (tErr) throw tErr;
+    if (nErr) throw nErr;
+    allTasks = tasksData || [];
+    allNotes = notesData || [];
     renderCalendar(); renderTaskList(); renderNoteList(); renderProgress(); updateBadge();
   } catch(e) {
-    showToast('❌ Gagal memuat. Cek koneksi & Firebase config.');
+    showToast('❌ Gagal memuat. Cek koneksi & Supabase config.');
     console.error(e);
   }
   hideLoader();
 }
 
 // ═══════════════════════════════
-// FIREBASE — CRUD TASKS
+// SUPABASE — CRUD TASKS
 // ═══════════════════════════════
 async function saveTask(data, id) {
   if (id) {
-    await supabase.from('tasks').update(data).eq('id', id);
+    const { error } = await db.from('tasks').update(data).eq('id', id);
+    if (error) throw error;
   } else {
-    await supabase.from('tasks').insert([ { ...data, created_at: serverTimestamp() });
+    const { data: row, error } = await db.from('tasks').insert({ ...data, created_at: new Date().toISOString() }).select().single();
+    if (error) throw error;
+    return row;
   }
 }
 async function removeTask(id) {
-  await supabase.from('tasks').delete().eq('id', id);
+  const { error } = await db.from('tasks').delete().eq('id', id);
+  if (error) throw error;
 }
 async function saveNote(data, id) {
   if (id) {
-    await updateDoc(doc(db, 'notes', id), { ...data, updated_at: serverTimestamp() });
+    const { error } = await db.from('notes').update({ ...data, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
   } else {
-    await addDoc(collection(db, 'notes'), { ...data, created_at: serverTimestamp() });
+    const { data: row, error } = await db.from('notes').insert({ ...data, created_at: new Date().toISOString() }).select().single();
+    if (error) throw error;
+    return row;
   }
 }
 async function removeNote(id) {
-  await deleteDoc(doc(db, 'notes', id));
+  const { error } = await db.from('notes').delete().eq('id', id);
+  if (error) throw error;
 }
 
 // ═══════════════════════════════
@@ -843,8 +854,8 @@ window.doSaveTask = async () => {
       if (t) Object.assign(t, data);
       showToast('✅ Tugas diperbarui!');
     } else {
-      const ref = await supabase.from('tasks').insert([ { ...data, created_at: serverTimestamp() });
-      allTasks.push({ id: ref.id, ...data });
+      const row = await saveTask(data, null);
+      allTasks.push(row);
       allTasks.sort((a,b) => a.date.localeCompare(b.date));
       showToast('✅ Tugas ditambahkan!');
     }
@@ -903,12 +914,12 @@ window.doSaveNote = async () => {
       const n = allNotes.find(x=>x.id===editingNoteId); if(n) Object.assign(n, data);
       showToast('✅ Catatan diperbarui!');
     } else {
-      const ref = await addDoc(collection(db, 'notes'), { ...data, created_at: serverTimestamp() });
-      allNotes.push({ id: ref.id, ...data });
+      const row = await saveNote(data, null);
+      allNotes.push(row);
       showToast('✅ Catatan disimpan!');
     }
     renderNoteList();
-  } catch(e) { showToast('Gagal simpan!'); }
+  } catch(e) { showToast('Gagal simpan!'); console.error(e); }
   hideLoader();
 };
 
@@ -935,7 +946,6 @@ function renderProgress() {
   document.getElementById('statSelesai').textContent  = selesai;
   document.getElementById('statTertunda').textContent = belum+proses;
 
-  // Donut SVG
   const donutData = [{label:'Selesai',count:selesai,color:'#43A047'},{label:'Proses',count:proses,color:'#FFC107'},{label:'Belum',count:belum,color:'#B0BEC5'}];
   const cx=65,cy=65,r=50,sw=16,circ=2*Math.PI*r;
   let offset=0, circles='';
@@ -967,7 +977,6 @@ function renderProgress() {
     `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill selesai" style="width:${total?Math.round(v/total*100):0}%"></div></div><div class="bar-count">${v}</div></div>`
   ).join('') || '<div class="no-task-msg">Belum ada data</div>';
 
-  // Streak
   const sr = document.getElementById('streakRow');
   if (sr) {
     const today = new Date(); let sh='';
@@ -993,8 +1002,7 @@ function pickColor(hex, el) {
   selectedColor=hex;
   document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('picked'));
   if(el) el.classList.add('picked');
-  else { const found=document.querySelector(`.color-swatch[title]`);
-    document.querySelectorAll('.color-swatch').forEach(s=>{ if(s.style.background===hex||s.style.backgroundColor===hex) s.classList.add('picked'); }); }
+  else { document.querySelectorAll('.color-swatch').forEach(s=>{ if(s.style.background===hex||s.style.backgroundColor===hex) s.classList.add('picked'); }); }
 }
 function showLoader() { document.getElementById('loader').style.display='flex'; }
 function hideLoader() { document.getElementById('loader').style.display='none'; }
@@ -1042,7 +1050,6 @@ window.doInstall = async () => {
 window.dismissInstall = () => { document.getElementById('installBanner').classList.remove('show'); localStorage.setItem('pwaInstallDismissed','1'); };
 window.closeGuide = () => document.getElementById('installGuide').classList.remove('open');
 
-// Close modal on overlay
 ['modalTask','modalNote'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
     if (e.target===this) { id==='modalTask'?closeModalTask():closeModalNote(); }
