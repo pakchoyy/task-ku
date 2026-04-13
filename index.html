@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#43A047">
+  <meta name="theme-color" content="#17c9a2">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,25 +11,26 @@
   <title>My Planner Task</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="https://api.iconify.design/fluent-emoji:spiral-notepad.svg">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2317c9a2'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle'%3E%F0%9F%93%8B%3C/text%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --g1: #43A047;
-      --g2: #1E88E5;
-      --grad: linear-gradient(135deg, #43A047, #1E88E5);
-      --grad-soft: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+      --g1: #17c9a2;
+      --g2: #1390b5;
+      --grad: linear-gradient(135deg, #17c9a2, #1390b5);
+      --grad-soft: linear-gradient(135deg, #e0fdf8, #e0f2fb);
       --yellow: #FFC107;
       --red: #EF5350;
-      --bg: #F0F4F8;
+      --bg: #EEF9FC;
       --card: #ffffff;
-      --text: #263238;
-      --muted: #78909C;
-      --border: #E0E7EF;
+      --text: #1A3040;
+      --muted: #6B9EAE;
+      --border: #C8EAF5;
       --radius: 14px;
-      --sidebar-w: 210px;
-      --shadow: 0 4px 20px rgba(30,136,229,0.10);
+      --sidebar-w: 220px;
+      --shadow: 0 4px 20px rgba(41,182,232,0.10);
     }
 
     body {
@@ -54,14 +55,17 @@
       z-index: 200;
       box-shadow: 4px 0 24px rgba(30,136,229,0.15);
     }
-    .sidebar-brand { padding: 22px 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.15); }
-    .sidebar-brand .logo {
-      width: 40px; height: 40px; background: rgba(255,255,255,0.2);
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-size: 20px; margin-bottom: 8px;
+    .sidebar-brand { padding: 18px 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    .sidebar-brand .brand-row {
+      display: flex; align-items: center; gap: 10px;
     }
-    .sidebar-brand h2 { font-size: 0.92rem; font-weight: 900; color: #fff; line-height: 1.3; }
-    .sidebar-brand p  { font-size: 0.68rem; color: rgba(255,255,255,0.65); font-weight: 600; margin-top: 2px; }
+    .sidebar-brand .logo {
+      width: 38px; height: 38px; background: rgba(255,255,255,0.22);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .sidebar-brand .brand-text h2 { font-size: 0.88rem; font-weight: 900; color: #fff; line-height: 1.25; }
+    .sidebar-brand .brand-text p  { font-size: 0.65rem; color: rgba(255,255,255,0.65); font-weight: 600; margin-top: 1px; }
     .sidebar-nav { flex: 1; padding: 12px 10px; }
     .nav-item {
       display: flex; align-items: center; gap: 10px;
@@ -145,14 +149,14 @@
     }
     .cal-day-num { line-height: 1; margin-bottom: 2px; }
     .cal-day:hover   { background: var(--grad-soft); }
-    .cal-day.today   { background: linear-gradient(135deg, rgba(67,160,71,0.25), rgba(30,136,229,0.25)); color: var(--text); border: 2px solid rgba(30,136,229,0.35); box-shadow: 0 3px 10px rgba(30,136,229,0.12); }
+    .cal-day.today   { background: linear-gradient(135deg, rgba(23,201,162,0.22), rgba(19,144,181,0.22)); color: var(--text); border: 2px solid rgba(19,144,181,0.4); box-shadow: 0 3px 10px rgba(19,144,181,0.12); }
     .cal-day.today .cal-day-num { color: var(--g2); font-weight: 900; }
     .cal-day.selected{ background: var(--grad-soft); border: 2px solid var(--g2); }
-    .cal-day.today.selected { background: linear-gradient(135deg, rgba(67,160,71,0.3), rgba(30,136,229,0.3)); border: 2px solid var(--g2); }
+    .cal-day.today.selected { background: linear-gradient(135deg, rgba(23,201,162,0.3), rgba(19,144,181,0.3)); border: 2px solid var(--g2); }
     .cal-day.blank   { cursor: default; }
     .cal-day.is-sunday { background: rgba(239,83,80,0.07); }
     .cal-day.is-sunday .cal-day-num { color: var(--red); }
-    .cal-day.today.is-sunday { background: linear-gradient(135deg, rgba(67,160,71,0.25), rgba(30,136,229,0.25)); border: 2px solid rgba(30,136,229,0.35); }
+    .cal-day.today.is-sunday { background: linear-gradient(135deg, rgba(23,201,162,0.22), rgba(19,144,181,0.22)); border: 2px solid rgba(19,144,181,0.4); }
     .cal-day.today.is-sunday .cal-day-num { color: var(--g2); }
     .cal-task-boxes { display: flex; gap: 1px; flex-wrap: wrap; justify-content: center; width: 100%; padding: 0 1px; }
     .cal-task-box   { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
@@ -205,7 +209,7 @@
       background: none; border: none; font-size: 0.95rem; cursor: pointer;
       color: var(--muted); padding: 4px; border-radius: 6px; transition: 0.2s; flex-shrink: 0;
     }
-    .btn-edit-task:hover { color: var(--g2); background: #E3F2FD; }
+    .btn-edit-task:hover { color: var(--g2); background: #e0f2fb; }
 
     /* Filter bar */
     .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -341,6 +345,16 @@
     .guide-text b { color: var(--g2); }
     .btn-guide-close { margin-top: 14px; width: 100%; padding: 11px; border-radius: 11px; background: var(--grad); color: white; border: none; font-family: 'Nunito',sans-serif; font-size: 0.88rem; font-weight: 800; cursor: pointer; }
 
+    /* ══ KATEGORI MANAGER ══ */
+    .kat-item { display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border-radius:10px;border:1.5px solid var(--border); }
+    .kat-name { flex:1;font-size:0.87rem;font-weight:700;color:var(--text); }
+    .kat-name-input { flex:1;border:1.5px solid var(--g2);border-radius:7px;padding:5px 9px;font-family:'Nunito',sans-serif;font-size:0.84rem;font-weight:700;color:var(--text);outline:none;background:white; }
+    .btn-kat-edit { background:var(--grad-soft);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;color:var(--g2);cursor:pointer;transition:0.2s;white-space:nowrap; }
+    .btn-kat-edit:hover { background:var(--grad);color:white;border-color:transparent; }
+    .btn-kat-save { background:var(--grad);border:none;border-radius:7px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;color:white;cursor:pointer;white-space:nowrap; }
+    .btn-kat-del { background:none;border:1px solid var(--border);border-radius:7px;padding:5px 8px;font-size:0.82rem;cursor:pointer;color:var(--muted);transition:0.2s; }
+    .btn-kat-del:hover { background:#FFEBEE;color:var(--red);border-color:var(--red); }
+
     /* ══ RESPONSIVE ══ */
     @media (max-width: 640px) {
       #sidebar { display: none !important; }
@@ -374,9 +388,13 @@
 <!-- SIDEBAR (desktop) -->
 <nav id="sidebar">
   <div class="sidebar-brand">
-    <div class="logo">📋</div>
-    <h2>My Planner Task</h2>
-    <p>Guru SD · Pak Choyy</p>
+    <div class="brand-row">
+      <div class="logo">📋</div>
+      <div class="brand-text">
+        <h2>My Planner Task</h2>
+        <p>Guru SD · Pak Choyy</p>
+      </div>
+    </div>
   </div>
   <div class="sidebar-nav">
     <div class="nav-item active" onclick="goPage('kalender')" data-page="kalender"><span class="nav-icon">📅</span> Kalender</div>
@@ -524,11 +542,11 @@
     <div class="form-group"><label class="form-label">Warna Tugas</label><div class="color-picker-row" id="colorPicker"></div></div>
     <div class="form-group">
       <label class="form-label">Kategori</label>
-      <select class="form-select" id="fCategory">
-        <option value="Pribadi">🙋 Pribadi</option>
-        <option value="Kerja">💼 Kerja</option>
-        <option value="Lainnya">📦 Lainnya</option>
-      </select>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select class="form-select" id="fCategory" style="flex:1"></select>
+        <button type="button" onclick="addCustomCategory()" style="padding:9px 12px;border-radius:10px;background:var(--grad);color:white;border:none;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:800;cursor:pointer;white-space:nowrap;">＋ Baru</button>
+        <button type="button" onclick="openKategoriManager()" style="padding:9px 10px;border-radius:10px;background:var(--grad-soft);color:var(--g2);border:1.5px solid var(--border);font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:800;cursor:pointer;white-space:nowrap;" title="Kelola Kategori">✏️</button>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModalTask()">Batal</button>
@@ -554,6 +572,21 @@
   </div>
 </div>
 
+<!-- MODAL: KELOLA KATEGORI -->
+<div class="modal-overlay" id="modalKategori">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <div class="modal-header">
+      <div class="modal-title">🗂️ Kelola Kategori</div>
+      <button class="btn-close-modal" onclick="closeKategoriManager()">✕</button>
+    </div>
+    <div id="katList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:340px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <input type="text" id="katNewInput" class="form-input" placeholder="Nama kategori baru..." style="flex:1" onkeydown="if(event.key==='Enter')saveNewKategori()">
+      <button onclick="saveNewKategori()" style="padding:10px 14px;border-radius:10px;background:var(--grad);color:white;border:none;font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;white-space:nowrap;">＋ Tambah</button>
+    </div>
+  </div>
+</div>
+
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -572,11 +605,11 @@ const DAYS_ID     = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
 const TASK_COLORS = [
   { hex: '#EF5350', label: 'Merah'  },
   { hex: '#FFC107', label: 'Kuning' },
-  { hex: '#43A047', label: 'Hijau'  },
-  { hex: '#1E88E5', label: 'Biru'   },
+  { hex: '#17c9a2', label: 'Tosca'  },
+  { hex: '#1390b5', label: 'Biru'   },
   { hex: '#8E24AA', label: 'Ungu'   },
 ];
-const DEFAULT_COLOR = '#1E88E5';
+const DEFAULT_COLOR = '#1390b5';
 const PAGE_TITLES   = { kalender:'📅 Kalender', daftar:'📝 Daftar Tugas', catatan:'✏️ Catatan', progress:'📊 Progress' };
 
 let allTasks = [], allNotes = [];
@@ -611,8 +644,91 @@ window.addEventListener('load', () => {
 });
 
 // ═══════════════════════════════
-// SUPABASE — LOAD DATA
+// KATEGORI
 // ═══════════════════════════════
+const DEFAULT_CATEGORIES = ['Pribadi','Kerja','Mengajar','Administrasi','Lainnya'];
+function loadCategories() {
+  const saved = localStorage.getItem('customCategories');
+  return saved ? JSON.parse(saved) : [...DEFAULT_CATEGORIES];
+}
+function saveCategories(cats) {
+  localStorage.setItem('customCategories', JSON.stringify(cats));
+}
+function renderCategorySelect(selected) {
+  const cats = loadCategories();
+  const sel = document.getElementById('fCategory');
+  sel.innerHTML = cats.map(c => `<option value="${c}" ${c===selected?'selected':''}>${c}</option>`).join('');
+}
+window.addCustomCategory = () => {
+  const name = prompt('Nama kategori baru:');
+  if (!name || !name.trim()) return;
+  const cats = loadCategories();
+  const clean = name.trim();
+  if (cats.includes(clean)) { showToast('Kategori sudah ada!'); return; }
+  cats.push(clean);
+  saveCategories(cats);
+  renderCategorySelect(clean);
+  showToast('✅ Kategori "'+clean+'" ditambahkan!');
+};
+
+window.openKategoriManager = () => {
+  renderKatList();
+  document.getElementById('katNewInput').value = '';
+  document.getElementById('modalKategori').classList.add('open');
+};
+window.closeKategoriManager = () => {
+  document.getElementById('modalKategori').classList.remove('open');
+  renderCategorySelect(document.getElementById('fCategory').value);
+};
+function renderKatList() {
+  const cats = loadCategories();
+  document.getElementById('katList').innerHTML = cats.map((c,i) => `
+    <div class="kat-item" id="kat-item-${i}">
+      <span class="kat-name" id="kat-name-${i}">${c}</span>
+      <input class="kat-name-input" id="kat-input-${i}" value="${c}" style="display:none" onkeydown="if(event.key==='Enter')saveEditKat(${i})">
+      <button class="btn-kat-edit" id="kat-btn-edit-${i}" onclick="startEditKat(${i})">✏️ Edit</button>
+      <button class="btn-kat-save" id="kat-btn-save-${i}" onclick="saveEditKat(${i})" style="display:none">💾 Simpan</button>
+      <button class="btn-kat-del" onclick="deleteKat(${i})" title="Hapus">🗑️</button>
+    </div>`).join('');
+}
+window.startEditKat = i => {
+  document.getElementById('kat-name-'+i).style.display='none';
+  document.getElementById('kat-input-'+i).style.display='';
+  document.getElementById('kat-btn-edit-'+i).style.display='none';
+  document.getElementById('kat-btn-save-'+i).style.display='';
+  document.getElementById('kat-input-'+i).focus();
+};
+window.saveEditKat = i => {
+  const cats = loadCategories();
+  const val = document.getElementById('kat-input-'+i).value.trim();
+  if (!val) { showToast('Nama tidak boleh kosong!'); return; }
+  if (cats.includes(val) && cats[i]!==val) { showToast('Kategori sudah ada!'); return; }
+  cats[i] = val;
+  saveCategories(cats);
+  renderKatList();
+  showToast('✅ Kategori diperbarui!');
+};
+window.deleteKat = i => {
+  const cats = loadCategories();
+  if (!confirm(`Hapus kategori "${cats[i]}"?`)) return;
+  cats.splice(i,1);
+  saveCategories(cats);
+  renderKatList();
+  showToast('🗑️ Kategori dihapus.');
+};
+window.saveNewKategori = () => {
+  const name = document.getElementById('katNewInput').value.trim();
+  if (!name) return;
+  const cats = loadCategories();
+  if (cats.includes(name)) { showToast('Kategori sudah ada!'); return; }
+  cats.push(name);
+  saveCategories(cats);
+  document.getElementById('katNewInput').value = '';
+  renderKatList();
+  showToast('✅ Kategori "'+name+'" ditambahkan!');
+};
+
+
 async function loadAll() {
   showLoader();
   try {
@@ -720,9 +836,7 @@ window.calPrev = () => { calMonth--; if(calMonth<0){calMonth=11;calYear--;} rend
 window.calNext = () => { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); };
 
 window.handleDayClick = (e, ds) => {
-  const tasks = allTasks.filter(t => t.date === ds);
   selectedDate = ds; renderCalendar();
-  if (tasks.length > 0) openCalPopup(e, ds, tasks);
   selectDay(ds);
 };
 
@@ -828,7 +942,7 @@ window.openModalTask = task => {
   document.getElementById('modalTaskTitle').textContent = task ? '✏️ Edit Tugas' : '➕ Tambah Tugas';
   document.getElementById('fTitle').value    = task ? (task.title||'') : '';
   document.getElementById('fDate').value     = task ? (task.date||'')  : toDateStr(new Date());
-  document.getElementById('fCategory').value = task ? (task.category||'Lainnya') : 'Lainnya';
+  renderCategorySelect(task ? (task.category||'Lainnya') : 'Lainnya');
   selectStatus(task ? (task.status||'belum') : 'belum', document.querySelector('.sel-'+(task?task.status||'belum':'belum')));
   pickColor(task ? (task.color||DEFAULT_COLOR) : DEFAULT_COLOR, null);
   document.getElementById('modalTask').classList.add('open');
@@ -947,7 +1061,7 @@ function renderProgress() {
   document.getElementById('statSelesai').textContent  = selesai;
   document.getElementById('statTertunda').textContent = belum+proses;
 
-  const donutData = [{label:'Selesai',count:selesai,color:'#43A047'},{label:'Proses',count:proses,color:'#FFC107'},{label:'Belum',count:belum,color:'#B0BEC5'}];
+  const donutData = [{label:'Selesai',count:selesai,color:'#17c9a2'},{label:'Proses',count:proses,color:'#FFC107'},{label:'Belum',count:belum,color:'#B0BEC5'}];
   const cx=65,cy=65,r=50,sw=16,circ=2*Math.PI*r;
   let offset=0, circles='';
   donutData.forEach(item => {
@@ -959,7 +1073,7 @@ function renderProgress() {
   document.getElementById('donutChart').innerHTML = `<svg width="130" height="130" viewBox="0 0 130 130">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#E8F5E9" stroke-width="${sw}"/>
     ${circles}
-    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="20" font-weight="900" fill="#1E88E5" font-family="Nunito,sans-serif">${pct}%</text>
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="20" font-weight="900" fill="#1390b5" font-family="Nunito,sans-serif">${pct}%</text>
     <text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="10" font-weight="700" fill="#78909C" font-family="Nunito,sans-serif">selesai</text>
   </svg>`;
   document.getElementById('donutLegend').innerHTML = donutData.map(item => {
@@ -1051,9 +1165,13 @@ window.doInstall = async () => {
 window.dismissInstall = () => { document.getElementById('installBanner').classList.remove('show'); localStorage.setItem('pwaInstallDismissed','1'); };
 window.closeGuide = () => document.getElementById('installGuide').classList.remove('open');
 
-['modalTask','modalNote'].forEach(id => {
+['modalTask','modalNote','modalKategori'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
-    if (e.target===this) { id==='modalTask'?closeModalTask():closeModalNote(); }
+    if (e.target===this) {
+      if(id==='modalTask') closeModalTask();
+      else if(id==='modalNote') closeModalNote();
+      else closeKategoriManager();
+    }
   });
 });
 window.closeModalTask = () => { document.getElementById('modalTask').classList.remove('open'); editingTaskId=null; };
