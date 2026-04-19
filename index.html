@@ -233,6 +233,32 @@
     .btn-note-del  { padding: 5px 10px; border-radius: 8px; background: none; border: 1px solid var(--border); font-family: 'Nunito',sans-serif; font-size: 0.72rem; font-weight: 800; color: var(--muted); cursor: pointer; transition: 0.2s; }
     .btn-note-del:hover { color: var(--red); border-color: var(--red); background: #FFEBEE; }
 
+    /* ══ NOTE PREVIEW MODAL ══ */
+    .note-preview-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      z-index: 450; align-items: center; justify-content: center; padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+    .note-preview-overlay.open { display: flex; }
+    .note-preview-box {
+      background: var(--card); border-radius: 18px; padding: 22px 20px 24px;
+      width: 100%; max-width: 460px; max-height: 80vh;
+      box-shadow: 0 12px 48px rgba(30,136,229,0.22); animation: popIn 0.2s ease;
+      display: flex; flex-direction: column;
+    }
+    .note-preview-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .note-preview-title { font-size: 1rem; font-weight: 900; color: var(--text); line-height: 1.3; flex: 1; }
+    .note-preview-month { font-size: 0.7rem; font-weight: 800; color: var(--g2); background: var(--grad-soft); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .note-preview-content {
+      flex: 1; overflow-y: auto; font-size: 0.86rem; font-weight: 600; color: var(--text);
+      line-height: 1.7; white-space: pre-wrap; word-break: break-word;
+      padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin: 10px 0;
+    }
+    .note-preview-actions { display: flex; gap: 8px; }
+    .btn-preview-edit { flex: 1; padding: 9px; border-radius: 10px; background: var(--grad); color: white; border: none; font-family: 'Nunito',sans-serif; font-size: 0.82rem; font-weight: 800; cursor: pointer; }
+    .btn-preview-close { padding: 9px 16px; border-radius: 10px; background: var(--bg); border: 1.5px solid var(--border); font-family: 'Nunito',sans-serif; font-size: 0.82rem; font-weight: 800; color: var(--muted); cursor: pointer; }
+
     /* ══ PROGRESS ══ */
     .progress-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px 10px; border: 1.5px solid var(--border); text-align: center; box-shadow: var(--shadow); }
@@ -369,6 +395,8 @@
       .progress-grid { gap: 8px; }
       .stat-num { font-size: 1.5rem; }
       .modal { border-radius: 20px 20px 0 0; }
+      .note-preview-overlay { padding: 0; align-items: flex-end; }
+      .note-preview-box { border-radius: 20px 20px 0 0; max-height: 85vh; }
     }
     @media (min-width: 641px) {
       #bottomNav { display: none !important; }
@@ -587,6 +615,21 @@
   </div>
 </div>
 
+<!-- NOTE PREVIEW POPUP -->
+<div class="note-preview-overlay" id="notePreviewOverlay" onclick="closeNotePreview()">
+  <div class="note-preview-box" onclick="event.stopPropagation()">
+    <div class="note-preview-header">
+      <div class="note-preview-title" id="notePreviewTitle"></div>
+      <div class="note-preview-month" id="notePreviewMonth"></div>
+    </div>
+    <div class="note-preview-content" id="notePreviewContent"></div>
+    <div class="note-preview-actions">
+      <button class="btn-preview-edit" id="notePreviewEditBtn">✏️ Edit</button>
+      <button class="btn-preview-close" onclick="closeNotePreview()">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -795,9 +838,16 @@ window.goPage = name => {
   if (name === 'progress') renderProgress();
 };
 
+// ═══════════════════════════════
+// FIX #2: FAB pakai selectedDate kalau ada
+// ═══════════════════════════════
 window.fabClick = () => {
-  if (currentPage === 'catatan') openModalNote(null);
-  else openModalTask(null);
+  if (currentPage === 'catatan') {
+    openModalNote(null);
+  } else {
+    // Buka modal task, kalau sedang di halaman kalender & ada tanggal dipilih → pakai selectedDate
+    openModalTask(null, currentPage === 'kalender' ? selectedDate : null);
+  }
 };
 
 // ═══════════════════════════════
@@ -936,23 +986,35 @@ window.openEditTask = id => {
 
 // ═══════════════════════════════
 // MODAL TUGAS
+// FIX #1 & #2: editingTaskId disimpan di luar closeModalTask,
+//              param dateOverride untuk auto-isi tanggal dari kalender
 // ═══════════════════════════════
-window.openModalTask = task => {
+window.openModalTask = (task, dateOverride) => {
   editingTaskId = task ? task.id : null;
   document.getElementById('modalTaskTitle').textContent = task ? '✏️ Edit Tugas' : '➕ Tambah Tugas';
-  document.getElementById('fTitle').value    = task ? (task.title||'') : '';
-  document.getElementById('fDate').value     = task ? (task.date||'')  : toDateStr(new Date());
+  document.getElementById('fTitle').value = task ? (task.title||'') : '';
+
+  // FIX #2: kalau ada dateOverride (dari selectedDate di kalender), pakai itu
+  if (task) {
+    document.getElementById('fDate').value = task.date || '';
+  } else {
+    document.getElementById('fDate').value = dateOverride || toDateStr(new Date());
+  }
+
   renderCategorySelect(task ? (task.category||'Lainnya') : 'Lainnya');
-  selectStatus(task ? (task.status||'belum') : 'belum', document.querySelector('.sel-'+(task?task.status||'belum':'belum')));
+  const statusVal = task ? (task.status||'belum') : 'belum';
+  selectStatus(statusVal, document.querySelector('.sel-'+statusVal));
   pickColor(task ? (task.color||DEFAULT_COLOR) : DEFAULT_COLOR, null);
   document.getElementById('modalTask').classList.add('open');
   setTimeout(() => document.getElementById('fTitle').focus(), 100);
 };
+
 window.closeModalTask = () => {
   document.getElementById('modalTask').classList.remove('open');
   editingTaskId = null;
 };
 
+// FIX #1: simpan editingTaskId ke var lokal SEBELUM closeModalTask() dipanggil
 window.doSaveTask = async () => {
   const title = document.getElementById('fTitle').value.trim();
   const date  = document.getElementById('fDate').value;
@@ -961,11 +1023,17 @@ window.doSaveTask = async () => {
   if (!date)  { showToast('Pilih tanggal dulu!'); return; }
 
   const data = { title, date, status: selectedStatus, category: cat, color: selectedColor };
-  showLoader(); closeModalTask();
+
+  // *** FIX UTAMA: simpan id sebelum close (close akan null-kan editingTaskId) ***
+  const taskIdToSave = editingTaskId;
+
+  showLoader();
+  closeModalTask(); // aman: taskIdToSave sudah tersimpan
+
   try {
-    if (editingTaskId) {
-      await saveTask(data, editingTaskId);
-      const t = allTasks.find(x => x.id===editingTaskId);
+    if (taskIdToSave) {
+      await saveTask(data, taskIdToSave);
+      const t = allTasks.find(x => x.id === taskIdToSave);
       if (t) Object.assign(t, data);
       showToast('✅ Tugas diperbarui!');
     } else {
@@ -991,18 +1059,33 @@ function renderNoteList() {
   emptyMsg.style.display = 'none';
   const byMonth = {};
   allNotes.forEach(n => { const k = n.month||0; if(!byMonth[k]) byMonth[k]=[]; byMonth[k].push(n); });
+  // FIX #3: note-card sekarang punya onclick untuk buka preview
   container.innerHTML = Object.keys(byMonth).sort((a,b)=>a-b).map(m =>
     `<div class="note-month-header">📅 ${MONTHS_ID[m]}</div>` +
-    byMonth[m].map(n => `<div class="note-card">
+    byMonth[m].map(n => `<div class="note-card" onclick="openNotePreview('${n.id}')">
       <div class="note-card-title">${escHtml(n.title||'Tanpa Judul')}</div>
       <div class="note-card-preview">${escHtml((n.content||'').replace(/\n/g,' ').substring(0,80))}</div>
       <div class="note-card-actions">
-        <button class="btn-note-edit" onclick="openEditNote('${n.id}')">✏️ Edit</button>
-        <button class="btn-note-del"  onclick="doDeleteNote('${n.id}')">🗑️ Hapus</button>
+        <button class="btn-note-edit" onclick="event.stopPropagation();openEditNote('${n.id}')">✏️ Edit</button>
+        <button class="btn-note-del"  onclick="event.stopPropagation();doDeleteNote('${n.id}')">🗑️ Hapus</button>
       </div>
     </div>`).join('')
   ).join('');
 }
+
+// FIX #3: fungsi buka popup preview catatan
+window.openNotePreview = id => {
+  const n = allNotes.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('notePreviewTitle').textContent   = n.title || 'Tanpa Judul';
+  document.getElementById('notePreviewMonth').textContent   = '📅 ' + (MONTHS_ID[n.month] || '');
+  document.getElementById('notePreviewContent').textContent = n.content || '(Catatan kosong)';
+  document.getElementById('notePreviewEditBtn').onclick     = () => { closeNotePreview(); openEditNote(id); };
+  document.getElementById('notePreviewOverlay').classList.add('open');
+};
+window.closeNotePreview = () => {
+  document.getElementById('notePreviewOverlay').classList.remove('open');
+};
 
 window.openModalNote = note => {
   editingNoteId = note ? note.id : null;
@@ -1022,11 +1105,15 @@ window.doSaveNote = async () => {
   const content = document.getElementById('nContent').value.trim();
   if (!title) { showToast('Judul tidak boleh kosong!'); return; }
   const data = { title, month, content };
+
+  // Sama seperti doSaveTask — simpan id sebelum close
+  const noteIdToSave = editingNoteId;
   showLoader(); closeModalNote();
+
   try {
-    if (editingNoteId) {
-      await saveNote(data, editingNoteId);
-      const n = allNotes.find(x=>x.id===editingNoteId); if(n) Object.assign(n, data);
+    if (noteIdToSave) {
+      await saveNote(data, noteIdToSave);
+      const n = allNotes.find(x=>x.id===noteIdToSave); if(n) Object.assign(n, data);
       showToast('✅ Catatan diperbarui!');
     } else {
       const row = await saveNote(data, null);
