@@ -430,7 +430,7 @@
     <div class="nav-item" onclick="goPage('catatan')" data-page="catatan"><span class="nav-icon">✏️</span> Catatan <span class="nav-badge" id="badgeNote" style="display:none">0</span></div>
     <div class="nav-item" onclick="goPage('progress')" data-page="progress"><span class="nav-icon">📊</span> Progress</div>
   </div>
-  <div class="sidebar-footer">My Planner Task v4.0 · Supabase</div>
+  <div class="sidebar-footer">My Planner Task v4.0 · Lokal</div>
 </nav>
 
 <!-- BOTTOM NAV (mobile) -->
@@ -630,15 +630,33 @@
   </div>
 </div>
 
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ═══════════════════════════════
-// CONFIG SUPABASE
+// DATABASE LOKAL
 // ═══════════════════════════════
-const SUPABASE_URL  = 'https://jcyutinrusvbbimxuzaq.supabase.co';
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjeXV0aW5ydXN2YmJpbXh1emFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNTI0OTUsImV4cCI6MjA5MTYyODQ5NX0.WNKiQgMV-sq5yyyaf8TX4cgy76tn7vQMt-C-Uz06X30';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const LOCAL_DB_KEYS = {
+  tasks: 'taskku_tasks',
+  notes: 'taskku_notes',
+};
+
+function readLocalTable(name) {
+  try {
+    const saved = localStorage.getItem(LOCAL_DB_KEYS[name]);
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+function writeLocalTable(name, rows) {
+  localStorage.setItem(LOCAL_DB_KEYS[name], JSON.stringify(rows));
+}
+
+function makeLocalId(prefix) {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
 
 // ═══════════════════════════════
 // KONSTANTA & STATE
@@ -775,52 +793,44 @@ window.saveNewKategori = () => {
 async function loadAll() {
   showLoader();
   try {
-    const [{ data: tasksData, error: tErr }, { data: notesData, error: nErr }] = await Promise.all([
-      db.from('tasks').select('*').order('date', { ascending: true }),
-      db.from('notes').select('*').order('month', { ascending: true })
-    ]);
-    if (tErr) throw tErr;
-    if (nErr) throw nErr;
-    allTasks = tasksData || [];
-    allNotes = notesData || [];
+    allTasks = readLocalTable('tasks').sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+    allNotes = readLocalTable('notes').sort((a, b) => Number(a.month || 0) - Number(b.month || 0));
     renderCalendar(); renderTaskList(); renderNoteList(); renderProgress(); updateBadge();
   } catch(e) {
-    showToast('❌ Gagal memuat. Cek koneksi & Supabase config.');
+    showToast('❌ Gagal memuat data lokal.');
     console.error(e);
   }
   hideLoader();
 }
 
 // ═══════════════════════════════
-// SUPABASE — CRUD TASKS
+// CRUD DATA LOKAL
 // ═══════════════════════════════
 async function saveTask(data, id) {
   if (id) {
-    const { error } = await db.from('tasks').update(data).eq('id', id);
-    if (error) throw error;
-  } else {
-    const { data: row, error } = await db.from('tasks').insert({ ...data, created_at: new Date().toISOString() }).select().single();
-    if (error) throw error;
-    return row;
+    const nextTasks = allTasks.map(task => task.id === id ? { ...task, ...data, updated_at: new Date().toISOString() } : task);
+    writeLocalTable('tasks', nextTasks);
+    return;
   }
+  const row = { id: makeLocalId('task'), ...data, created_at: new Date().toISOString() };
+  writeLocalTable('tasks', [...allTasks, row]);
+  return row;
 }
 async function removeTask(id) {
-  const { error } = await db.from('tasks').delete().eq('id', id);
-  if (error) throw error;
+  writeLocalTable('tasks', allTasks.filter(task => task.id !== id));
 }
 async function saveNote(data, id) {
   if (id) {
-    const { error } = await db.from('notes').update({ ...data, updated_at: new Date().toISOString() }).eq('id', id);
-    if (error) throw error;
-  } else {
-    const { data: row, error } = await db.from('notes').insert({ ...data, created_at: new Date().toISOString() }).select().single();
-    if (error) throw error;
-    return row;
+    const nextNotes = allNotes.map(note => note.id === id ? { ...note, ...data, updated_at: new Date().toISOString() } : note);
+    writeLocalTable('notes', nextNotes);
+    return;
   }
+  const row = { id: makeLocalId('note'), ...data, created_at: new Date().toISOString() };
+  writeLocalTable('notes', [...allNotes, row]);
+  return row;
 }
 async function removeNote(id) {
-  const { error } = await db.from('notes').delete().eq('id', id);
-  if (error) throw error;
+  writeLocalTable('notes', allNotes.filter(note => note.id !== id));
 }
 
 // ═══════════════════════════════
