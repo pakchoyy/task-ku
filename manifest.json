@@ -21,5 +21,10 @@
       "src": "./icon-512.png",
       "type": "image/png"
     }
+  ],
+  "id": "./",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
   ]
 }
