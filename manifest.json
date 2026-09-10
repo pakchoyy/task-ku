@@ -1,11 +1,12 @@
 {
-  "name": "My Planner Task",
-  "short_name": "Planner",
+  "name": "Task Ku",
+  "short_name": "Task Ku",
   "description": "Planner Tugas Pak Choyy",
-  "start_url": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#F0F4F8",
-  "theme_color": "#43A047",
+  "background_color": "#F1F7F8",
+  "theme_color": "#087F83",
   "orientation": "portrait",
   "icons": [
     {
