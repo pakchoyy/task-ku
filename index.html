@@ -1,469 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#087f83">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Task Ku</title>
-  <link rel="manifest" href="manifest.json">
-  <style>
-    *,*::before,*::after{box-sizing:border-box}
-    :root{
-      --bg:#f1f7f8;--surface:#fff;--surface-soft:#e7f2f3;--text:#17343a;--muted:#617b80;
-      --line:#d8e7e9;--accent:#087f83;--accent-soft:#daf1f0;--danger:#c83d4b;
-      --school:#386fd0;--content:#9a5598;--home:#bf6f23;--other:#63747a;
-      --shadow:0 10px 30px rgba(30,79,88,.09);--radius:18px;
-    }
-    html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
-    body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,rgba(8,127,131,.12),transparent 32rem),var(--bg)}
-    button,input,select,textarea{font:inherit}
-    button{cursor:pointer}
-    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #0e7490;outline-offset:3px}
-    .shell{min-height:100vh}
-    .side{position:fixed;inset:0 auto 0 0;width:230px;background:linear-gradient(160deg,#087f83,#176d91);color:#fff;padding:24px 14px;display:flex;flex-direction:column;z-index:20}
-    .brand{padding:0 10px 24px}
-    .brand h1{font-size:1.25rem;line-height:1.1;margin:0 0 5px}
-    .brand p{font-size:.8rem;opacity:.75;margin:0}
-    .nav{display:grid;gap:6px}
-    .nav-btn{border:0;border-radius:12px;background:transparent;color:rgba(255,255,255,.78);min-height:46px;padding:0 12px;display:flex;align-items:center;gap:11px;text-align:start;font-weight:700}
-    .nav-btn.active{background:rgba(255,255,255,.18);color:#fff}
-    .storage-note{margin-top:auto;padding:14px 10px 0;font-size:.75rem;opacity:.65}
-    .app{margin-inline-start:230px;min-height:100vh}
-    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(216,231,233,.9);padding:14px 22px;display:flex;align-items:center;gap:12px}.topbar-copy{flex:1}.install-top-btn{border:0;border-radius:11px;background:var(--accent-soft);color:var(--accent);min-height:42px;padding:0 13px;font-weight:800;white-space:nowrap}
-    .topbar strong{font-size:.9rem}
-    .topbar span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
-    .page{display:none;max-width:860px;margin:auto;padding:16px 18px 104px}
-    .page.active{display:block}
-    .date-nav{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:6px;touch-action:pan-y}
-    .icon-btn{border:0;border-radius:12px;background:var(--surface-soft);color:var(--text);width:44px;height:44px;display:grid;place-items:center;font-size:1.35rem}
-    .date-copy{text-align:center;user-select:none}
-    .date-copy strong{display:block;text-transform:capitalize}
-    .date-copy span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
-    .progress-wrap{margin:13px 3px}
-    .progress-head{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.78rem}
-    .progress-head strong{color:var(--text);font-variant-numeric:tabular-nums}
-    .progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px}
-    .progress>span{display:block;height:100%;background:var(--accent);transition:width .15s}
-    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-    .category-card{border:2px solid transparent;border-radius:15px;background:var(--surface);color:var(--text);min-height:68px;padding:7px 6px;box-shadow:0 5px 18px rgba(30,79,88,.06)}
-    .category-card.active{border-color:var(--accent);background:var(--accent-soft)}
-    .category-card .emoji{display:block;font-size:1.15rem;margin-bottom:2px}
-    .category-card strong{display:block}
-    .category-card small{color:var(--muted)}
-    .panel{background:var(--surface);border-radius:15px;box-shadow:0 7px 22px rgba(30,79,88,.07);padding:14px;margin-bottom:14px}
-    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-    .section-head h2,.section-head h3{margin:0}
-    .section-head h2{font-size:1rem}.section-head h3{font-size:.9rem}
-    .section-head span{color:var(--muted);font-size:.75rem}
-    .task-row{display:grid;grid-template-columns:28px 10px 1fr auto;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:10px 10px;margin-bottom:7px;transition:transform .15s,box-shadow .15s}.task-section+.task-section{margin-top:14px}.daily-panel{background:linear-gradient(145deg,#ffffff,#effaf8);border:1px solid #cde9e5}.daily-panel .task-row{background:#fff}
-    .task-row:last-child{margin-bottom:0}
-    .task-check{width:20px;height:20px;accent-color:var(--accent)}
-    .task-dot{width:9px;height:9px;border-radius:50%}
-    .task-copy{min-width:0}
-    .task-copy strong{display:block;font-size:.87rem;overflow-wrap:break-word}
-    .task-copy small{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}
-    .task-row.done .task-copy strong{text-decoration:line-through;color:var(--muted)}
-    .row-actions{display:flex;gap:3px}
-    .row-btn{border:0;background:transparent;color:var(--muted);width:38px;height:38px;border-radius:10px}
-    .row-btn.danger{color:var(--danger)}
-    .empty{text-align:center;color:var(--muted);padding:28px 10px}
-    .empty strong{display:block;color:var(--text);margin-bottom:4px}
-    .primary,.secondary{border:0;border-radius:12px;min-height:44px;padding:0 16px;font-weight:800}
-    .primary{background:var(--accent);color:#fff}
-    .secondary{background:var(--surface-soft);color:var(--text)}
-    .fab{position:fixed;right:24px;bottom:24px;z-index:25;border:0;border-radius:999px;min-height:52px;padding:0 19px;background:var(--accent);color:#fff;box-shadow:0 10px 24px rgba(8,127,131,.28);font-weight:800}
-    .calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .calendar-head h2{margin:0;text-transform:capitalize;font-size:1.1rem}
-    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-    .weekday{text-align:center;color:var(--muted);font-size:.68rem;font-weight:800;padding:5px 2px}.weekday:first-child{color:var(--danger)}
-    .day{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);min-height:48px;padding:5px 2px;text-align:center;position:relative}
-    .day.blank{visibility:hidden}.day.today{border-color:var(--accent);background:var(--accent-soft)}.day.selected{background:linear-gradient(135deg,#17c9a2,#1390b5);color:#fff;box-shadow:0 5px 12px rgba(19,144,181,.2)}
-    .day.sunday:not(.selected){color:var(--danger)}.day strong{display:block;font-size:.8rem}.day-dots{display:flex;justify-content:center;gap:2px;margin-top:5px;min-height:4px}.day-dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.65}.day-more{font-size:.57rem;line-height:1;color:inherit;opacity:.7}
-    .schedule-list{display:grid;gap:10px}
-    .schedule-card{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:10px 1fr auto;gap:11px;align-items:start}
-    .schedule-card h3{font-size:.95rem;margin:0 0 4px}
-    .schedule-card p{color:var(--muted);font-size:.78rem;margin:0}
-    .note-card{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
-    .note-card h3{font-size:.95rem;margin:0 0 5px}.note-card p{white-space:pre-wrap;color:var(--muted);margin:0;font-size:.85rem}
-    .overlay{position:fixed;inset:0;background:rgba(9,28,31,.48);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:20px}
-    .overlay.open{display:flex}
-    .modal{width:min(100%,520px);max-height:88vh;overflow:auto;background:var(--surface);border-radius:22px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
-    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.modal-head h2{font-size:1.1rem;margin:0}
-    .field{display:grid;gap:6px;margin-bottom:14px;font-size:.82rem;font-weight:700}
-    .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:11px;min-height:46px;padding:10px 12px;font-size:16px}
-    .field textarea{min-height:130px;resize:vertical}
-    .kind-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-    .kind-option{position:relative}
-    .kind-option input{position:absolute;opacity:0}
-    .kind-option span{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:11px;min-height:44px;background:var(--bg)}
-    .kind-option input:checked+span{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-    .day-option{position:relative}.day-option input{position:absolute;opacity:0}
-    .day-option span{display:grid;place-items:center;min-height:42px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
-    .day-option input:checked+span{background:var(--accent);border-color:var(--accent);color:#fff}
-    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-    .status{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--text);color:var(--surface);padding:11px 16px;border-radius:12px;z-index:80;display:none}
-    .status.show{display:block}
-    .bottom-nav{display:none}
-    .install-banner{display:none;position:fixed;left:16px;right:16px;bottom:92px;z-index:70;max-width:430px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgba(23,52,58,.2);padding:15px}
-    .install-banner.show{display:block}.install-info{display:grid;grid-template-columns:48px 1fr;gap:11px;align-items:center;margin-bottom:12px}.install-icon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#17c9a2,#1390b5);display:grid;place-items:center;font-size:1.45rem}.install-info h3{font-size:.95rem;margin:0 0 3px}.install-info p{font-size:.78rem;color:var(--muted);margin:0}.install-actions{display:flex;gap:8px}.install-actions .primary{flex:1}
-    .guide-overlay{position:fixed;inset:0;z-index:75;background:rgba(9,28,31,.48);display:none;align-items:flex-end;justify-content:center}.guide-overlay.open{display:flex}.guide-box{background:var(--surface);border-radius:22px 22px 0 0;width:min(100%,500px);padding:21px 20px calc(24px + env(safe-area-inset-bottom))}.guide-box h2{font-size:1.1rem;margin:0 0 4px}.guide-box>p{color:var(--muted);font-size:.82rem;margin:0 0 14px}.guide-step{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:10px 0}.guide-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.guide-step p{margin:2px 0 0;font-size:.86rem}
-    .nav-icon{display:block;font-size:1rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
-    @media(max-width:720px){
-      .side{display:none}.app{margin:0}.topbar{padding:10px 13px}.page{padding:10px 11px 96px}
-      .category-grid{gap:6px}.category-card{min-height:64px;padding-inline:3px}
-      .bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);inset:auto 0 0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-      .bottom-nav .nav-btn{display:grid;justify-items:center;gap:3px;color:var(--muted);padding:5px 4px;min-height:54px;font-size:.64rem}
-      .bottom-nav .nav-btn.active{background:transparent;color:var(--accent)}
-      .fab{right:16px;bottom:90px}.overlay{padding:0}.modal{border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
-      .calendar-grid{gap:3px}.day{min-height:46px}.row-actions{display:none}
-    }
-    @media(max-width:350px){.category-card small{display:none}.page{padding-inline:10px}.days{gap:3px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f8b8d">
+<title>Task APK Choy</title>
+<link rel="manifest" href="./manifest.json">
+<script src="https://unpkg.com/lucide@0.468.0"></script>
+<style>
+*{box-sizing:border-box}html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+:root{--bg:#f3f8fa;--surface:#fff;--soft:#e9f3f5;--text:#17333b;--muted:#668087;--line:#d9e7ea;--accent:#0f8b8d;--accent-soft:#dff3f2;--danger:#c33e4b;--shadow:0 7px 22px rgba(24,68,78,.08)}
+html.dark{--bg:#0d171b;--surface:#162329;--soft:#1d3037;--text:#edf7f8;--muted:#9cb1b6;--line:#294047;--accent:#43c2bd;--accent-soft:#173c3c;--danger:#ff8290;--shadow:0 8px 26px rgba(0,0,0,.22)}
+body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.topbar{position:sticky;top:0;z-index:20;height:58px;padding:8px 14px;display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#19c8a5,#168daf);display:grid;place-items:center;color:#fff}.logo svg{width:19px;height:19px}
+.brand{flex:1;min-width:0}.brand strong{display:block;font-size:.92rem}.brand small{display:block;color:var(--muted);font-size:.67rem;margin-top:1px}
+.icon-btn{border:0;background:var(--soft);color:var(--text);width:40px;height:40px;border-radius:11px;display:grid;place-items:center}.icon-btn svg{width:17px;height:17px}
+main{max-width:760px;margin:auto;padding:11px 11px 90px}.page{display:none;min-width:0}.page.active{display:block}
+.datebar{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:6px;background:var(--surface);border-radius:14px;padding:5px;box-shadow:var(--shadow);touch-action:pan-y}
+.date-title{border:0;background:transparent;color:var(--text);text-align:center}.date-title strong{display:block;text-transform:capitalize;font-size:.88rem}.date-title small{color:var(--muted);font-size:.68rem}
+.progress-line{display:flex;justify-content:space-between;color:var(--muted);font-size:.68rem;margin:11px 2px 5px}.track{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:12px}.track span{display:block;height:100%;background:var(--accent)}
+.categories{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}.category{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;min-height:58px;padding:6px 3px}.category.active{border-color:var(--accent);background:var(--accent-soft)}.category svg{width:16px;height:16px}.category strong{display:block;font-size:.73rem;margin-top:1px}.category small{color:var(--muted);font-size:.62rem}
+.panel{background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow);margin-bottom:11px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.panel-head h2{font-size:.88rem;margin:0}.panel-head small{font-size:.65rem;color:var(--muted)}
+.task{display:grid;grid-template-columns:24px 8px 1fr auto;align-items:center;gap:8px;padding:9px 8px;margin-bottom:6px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}.task:last-child{margin-bottom:0}.task input{width:19px;height:19px;accent-color:var(--accent)}.dot{width:7px;height:7px;border-radius:50%}.task strong{display:block;font-size:.78rem;overflow-wrap:anywhere}.task small{display:block;font-size:.64rem;color:var(--muted);margin-top:2px}.task.done strong{text-decoration:line-through;color:var(--muted)}
+.mini-actions{display:flex}.mini{border:0;background:transparent;color:var(--muted);width:34px;height:34px;border-radius:9px;display:grid;place-items:center}.mini svg{width:15px;height:15px}.mini.danger{color:var(--danger)}
+.empty{text-align:center;padding:20px 8px;color:var(--muted);font-size:.72rem}.empty strong{display:block;color:var(--text);margin-bottom:3px}
+.page-title{display:flex;align-items:center;justify-content:space-between;margin:2px 1px 12px}.page-title h1{font-size:1rem;margin:0}.page-title p{font-size:.68rem;color:var(--muted);margin:2px 0 0}
+.calendar-nav{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;text-align:center;margin-bottom:10px}.calendar-nav h2{font-size:.9rem;text-transform:capitalize;margin:0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.weekday{text-align:center;font-size:.61rem;color:var(--muted);padding:4px 0}.weekday:first-child{color:var(--danger)}.day{border:1px solid transparent;background:transparent;color:var(--text);border-radius:9px;min-height:43px;padding:5px 1px}.day.blank{visibility:hidden}.day.today{border-color:var(--accent);background:var(--accent-soft)}.day.selected{color:#fff;background:linear-gradient(135deg,#19c8a5,#168daf)}.day.sun:not(.selected){color:var(--danger)}.day b{display:block;font-size:.7rem}.dots{display:flex;justify-content:center;gap:2px;height:4px;margin-top:4px}.dots i{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.7}
+.list-card{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:10px;margin-bottom:7px}.list-card h3{font-size:.78rem;margin:0 0 3px}.list-card p{font-size:.64rem;color:var(--muted);margin:0}
+.fab{position:fixed;right:15px;bottom:76px;z-index:25;border:0;border-radius:99px;background:var(--accent);color:#fff;min-height:44px;padding:0 14px;font-size:.75rem;font-weight:700;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent)}
+.bottom{position:fixed;inset:auto 0 0;z-index:24;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--surface) 96%,transparent);border-top:1px solid var(--line);padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+.nav-btn{border:0;background:transparent;color:var(--muted);min-height:50px;padding:4px 1px;display:grid;place-items:center;align-content:center;gap:2px;font-size:.58rem}.nav-btn svg{width:15px;height:15px}.nav-btn.active{color:var(--accent)}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(6,20,24,.5);display:none;align-items:flex-end;justify-content:center}.overlay.open{display:flex}.modal{background:var(--surface);width:min(100%,500px);max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 15px calc(18px + env(safe-area-inset-bottom));overscroll-behavior:contain}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.modal-head h2{font-size:.92rem;margin:0}
+.field{display:grid;gap:5px;font-size:.72rem;font-weight:700;margin-bottom:11px}.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;min-height:43px;padding:9px 10px;font-size:16px}.field textarea{min-height:110px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.daycheck{position:relative}.daycheck input{position:absolute;opacity:0}.daycheck span{display:grid;place-items:center;min-height:39px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:.65rem}.daycheck input:checked+span{background:var(--accent);color:#fff;border-color:var(--accent)}
+.actions{display:flex;justify-content:flex-end;gap:7px}.primary,.secondary{border:0;border-radius:10px;min-height:42px;padding:0 13px;font-size:.74rem;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:var(--soft);color:var(--text)}
+.install-alert{position:fixed;left:12px;right:12px;bottom:70px;z-index:60;max-width:430px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 14px 36px rgba(0,0,0,.2);display:none}.install-alert.show{display:block}.install-row{display:flex;gap:10px;align-items:center}.install-row .logo{flex:none}.install-copy{flex:1}.install-copy strong{font-size:.78rem}.install-copy small{display:block;color:var(--muted);font-size:.64rem;margin-top:2px}.install-actions{display:flex;gap:6px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:var(--text);color:var(--surface);padding:9px 12px;border-radius:10px;font-size:.7rem;display:none;z-index:70;white-space:nowrap}.toast.show{display:block}
+@media(min-width:760px){main{padding-bottom:30px}.bottom{position:sticky;top:58px;bottom:auto;max-width:760px;margin:auto;border:1px solid var(--line);border-radius:0 0 14px 14px}.fab{bottom:24px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
-<div class="shell">
-  <aside class="side">
-    <div class="brand"><h1>Task Ku</h1><p>Agenda yang mengikuti harimu</p></div>
-    <nav class="nav" aria-label="Navigasi utama">
-      <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
-      <button class="nav-btn" data-page="tasks"><span class="nav-icon">📝</span><span>Tugas</span></button>
-      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
-      <button class="nav-btn" data-page="routines"><span class="nav-icon">🔁</span><span>Harian</span></button>
-      <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
-    </nav>
-    <div class="storage-note">Data tersimpan di perangkat ini.</div>
-  </aside>
-
-  <div class="app">
-    <header class="topbar"><div class="topbar-copy"><strong id="pageTitle">Hari ini</strong><span id="pageSubtitle">Lihat dan selesaikan rencana harian</span></div><button class="install-top-btn" id="installTop" type="button" aria-label="Install aplikasi">⬇ Install</button></header>
-
-    <main>
-      <section class="page active" id="page-today">
-        <div class="date-nav" id="dateSwipe">
-          <button class="icon-btn" id="prevDay" aria-label="Hari sebelumnya">‹</button>
-          <button class="date-copy" id="openCalendar" style="border:0;background:transparent;color:inherit" aria-label="Pilih tanggal dari kalender">
-            <strong id="dayName"></strong><span id="dateLabel"></span>
-          </button>
-          <button class="icon-btn" id="nextDay" aria-label="Hari berikutnya">›</button>
-        </div>
-        <div class="progress-wrap">
-          <div class="progress-head"><span>Progres hari ini</span><strong id="progressText">0 dari 0 selesai</strong></div>
-          <div class="progress" role="progressbar" aria-label="Progres tugas harian" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><span id="progressFill"></span></div>
-        </div>
-        <div class="category-grid" id="categoryGrid" aria-label="Filter kategori"></div>
-        <section class="panel task-section">
-          <div class="section-head"><h2 id="dailyHeading">Tugas terjadwal</h2><span id="dailyCount"></span></div>
-          <div id="dailyTasks"></div>
-        </section>
-        <section class="panel daily-panel task-section">
-          <div class="section-head"><div><h2>☀️ Tugas harian</h2><span>Rutinitas yang muncul setiap hari</span></div><span id="routineCount"></span></div>
-          <div id="dailyRoutines"></div>
-        </section>
-      </section>
-
-      <section class="page" id="page-calendar">
-        <div class="panel">
-          <div class="calendar-head">
-            <button class="icon-btn" id="prevMonth" aria-label="Bulan sebelumnya">‹</button>
-            <h2 id="calendarTitle"></h2>
-            <button class="icon-btn" id="nextMonth" aria-label="Bulan berikutnya">›</button>
-          </div>
-          <div class="calendar-grid" aria-hidden="true"><div class="weekday">Min</div><div class="weekday">Sen</div><div class="weekday">Sel</div><div class="weekday">Rab</div><div class="weekday">Kam</div><div class="weekday">Jum</div><div class="weekday">Sab</div></div>
-          <div class="calendar-grid" id="calendarDays"></div>
-        </div>
-      </section>
-
-      <section class="page" id="page-tasks">
-        <div class="section-head"><div><h2>Tugas</h2><span>Atur tugas berdasarkan tanggal atau hari</span></div><button class="primary" data-open-task>Tambah tugas</button></div>
-        <div class="schedule-list" id="scheduleList"></div>
-      </section>
-
-      <section class="page" id="page-routines">
-        <div class="section-head"><div><h2>Jadwal harian</h2><span>Rutinitas tanpa kategori dan tanggal</span></div><button class="primary" id="openRoutine">Tambah harian</button></div>
-        <div class="schedule-list" id="routineList"></div>
-      </section>
-      <section class="page" id="page-notes">
-        <div class="section-head"><div><h2>Catatan</h2><span>Simpan rincian panjang atau ide bebas</span></div><button class="primary" id="openNote">Tambah catatan</button></div>
-        <div id="notesList"></div>
-      </section>
-    </main>
-
-    <button class="fab" data-open-task>＋ Tambah tugas</button>
-
-    <nav class="bottom-nav" aria-label="Navigasi utama seluler">
-      <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
-      <button class="nav-btn" data-page="tasks"><span class="nav-icon">📝</span><span>Tugas</span></button>
-      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
-      <button class="nav-btn" data-page="routines"><span class="nav-icon">🔁</span><span>Harian</span></button>
-      <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
-    </nav>
-  </div>
-</div>
-
-<div class="install-banner" id="installBanner">
-  <div class="install-info"><div class="install-icon">📋</div><div><h3>Install Task Ku</h3><p>Buka langsung dari layar utama seperti aplikasi.</p></div></div>
-  <div class="install-actions"><button class="primary" id="installNow" type="button">📲 Install sekarang</button><button class="secondary" id="installLater" type="button">Nanti</button></div>
-</div>
-<div class="guide-overlay" id="installGuide">
-  <div class="guide-box" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
-    <div class="modal-head"><h2 id="guideTitle">📲 Cara install di HP</h2><button class="icon-btn" id="closeGuide" type="button" aria-label="Tutup panduan">×</button></div>
-    <p>Pilih cara sesuai perangkat yang digunakan.</p>
-    <div class="guide-step"><span class="guide-num">1</span><p>Buka Task Ku di <strong>Chrome</strong> pada Android atau <strong>Safari</strong> pada iPhone.</p></div>
-    <div class="guide-step"><span class="guide-num">2</span><p>Android: tekan menu ⋮ lalu pilih <strong>Tambahkan ke layar utama</strong>. iPhone: tekan Bagikan lalu pilih <strong>Add to Home Screen</strong>.</p></div>
-    <div class="guide-step"><span class="guide-num">3</span><p>Tekan <strong>Tambahkan</strong>. Ikon Task Ku akan muncul di layar utama.</p></div>
-    <button class="primary" id="understandGuide" type="button" style="width:100%;margin-top:10px">Mengerti</button>
-  </div>
-</div>
-<div class="overlay" id="taskOverlay" aria-hidden="true">
-  <form class="modal" id="taskForm" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
-    <div class="modal-head"><h2 id="taskModalTitle">Tambah tugas</h2><button class="icon-btn" type="button" data-close-task aria-label="Tutup formulir">×</button></div>
-    <label class="field">Nama tugas<input id="taskName" required autocomplete="off" placeholder="Contoh: Edit video"></label>
-    <label class="field">Kategori<select id="taskCategory"><option>Sekolah</option><option>Konten</option><option>Rumah</option><option>Lainnya</option></select></label>
-    <label class="field">Waktu<input id="taskTime" type="time"></label>
-    <div class="field"><span>Jenis jadwal</span>
-      <div class="kind-row">
-        <label class="kind-option"><input type="radio" name="taskKind" value="weekly" checked><span>Berulang mingguan</span></label>
-        <label class="kind-option"><input type="radio" name="taskKind" value="once"><span>Satu tanggal</span></label>
-      </div>
-    </div>
-    <div class="field" id="weekDaysField"><span>Pilih hari</span><button class="secondary" id="selectEveryDay" type="button">Pilih semua hari</button>
-      <div class="days">
-        <label class="day-option"><input type="checkbox" name="weekDay" value="1"><span>Sen</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="2"><span>Sel</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="3"><span>Rab</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="4"><span>Kam</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="5"><span>Jum</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="6"><span>Sab</span></label>
-        <label class="day-option"><input type="checkbox" name="weekDay" value="0"><span>Min</span></label>
-      </div>
-    </div>
-    <label class="field" id="onceDateField" hidden>Tanggal<input id="taskDate" type="date"></label>
-    <div class="modal-actions"><button class="secondary" type="button" data-close-task>Batal</button><button class="primary" type="submit">Simpan tugas</button></div>
-  </form>
-</div>
-
-<div class="overlay" id="routineOverlay" aria-hidden="true">
-  <form class="modal" id="routineForm" role="dialog" aria-modal="true" aria-labelledby="routineModalTitle">
-    <div class="modal-head"><h2 id="routineModalTitle">Tambah jadwal harian</h2><button class="icon-btn" type="button" data-close-routine aria-label="Tutup formulir">×</button></div>
-    <label class="field">Nama kegiatan<input id="routineName" required autocomplete="off" placeholder="Contoh: Ngaji"></label>
-    <div class="kind-row"><label class="field">Jam mulai<input id="routineStart" type="time" required></label><label class="field">Jam selesai<input id="routineEnd" type="time" required></label></div>
-    <div class="field"><span>Pilih hari</span><button class="secondary" id="routineEveryDay" type="button">Pilih semua hari</button>
-      <div class="days"><label class="day-option"><input type="checkbox" name="routineDay" value="1"><span>Sen</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="2"><span>Sel</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="3"><span>Rab</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="4"><span>Kam</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="5"><span>Jum</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="6"><span>Sab</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="0"><span>Min</span></label></div>
-    </div>
-    <div class="modal-actions"><button class="secondary" type="button" data-close-routine>Batal</button><button class="primary" type="submit">Simpan harian</button></div>
-  </form>
-</div>
-<div class="overlay" id="noteOverlay" aria-hidden="true">
-  <form class="modal" id="noteForm" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
-    <div class="modal-head"><h2 id="noteModalTitle">Tambah catatan</h2><button class="icon-btn" type="button" data-close-note aria-label="Tutup formulir">×</button></div>
-    <label class="field">Judul<input id="noteTitle" required autocomplete="off" placeholder="Contoh: Ide konten bulan ini"></label>
-    <label class="field">Isi catatan<textarea id="noteContent" placeholder="Tulis rincian di sini…"></textarea></label>
-    <div class="modal-actions"><button class="secondary" type="button" data-close-note>Batal</button><button class="primary" type="submit">Simpan catatan</button></div>
-  </form>
-</div>
-<div class="status" id="status" role="status" aria-live="polite"></div>
-
+<header class="topbar"><div class="logo"><i data-lucide="list-checks"></i></div><div class="brand"><strong>Task APK Choy</strong><small id="syncText">Data lokal siap</small></div><button class="icon-btn" id="themeBtn" aria-label="Ganti mode warna"><i data-lucide="moon"></i></button></header>
+<nav class="bottom" aria-label="Navigasi utama">
+<button class="nav-btn" data-page="calendar"><i data-lucide="calendar-days"></i><span>Kalender</span></button>
+<button class="nav-btn" data-page="tasks"><i data-lucide="square-check-big"></i><span>Tugas</span></button>
+<button class="nav-btn active" data-page="today"><i data-lucide="sun"></i><span>Hari ini</span></button>
+<button class="nav-btn" data-page="routines"><i data-lucide="repeat-2"></i><span>Harian</span></button>
+<button class="nav-btn" data-page="notes"><i data-lucide="notebook-pen"></i><span>Catatan</span></button>
+</nav>
+<main>
+<section class="page active" id="page-today">
+<div class="datebar" id="datebar"><button class="icon-btn" id="prevDay" aria-label="Hari sebelumnya"><i data-lucide="chevron-left"></i></button><button class="date-title" id="datePick"><strong id="dayName"></strong><small id="dateLabel"></small></button><button class="icon-btn" id="nextDay" aria-label="Hari berikutnya"><i data-lucide="chevron-right"></i></button></div>
+<div class="progress-line"><span>Progres</span><b id="progressText"></b></div><div class="track"><span id="progressFill"></span></div>
+<div class="categories" id="categories"></div>
+<div class="panel"><div class="panel-head"><h2 id="scheduledTitle">Tugas terjadwal</h2><small id="scheduledCount"></small></div><div id="todayTasks"></div></div>
+<div class="panel"><div class="panel-head"><h2>Jadwal harian</h2><small id="routineCount"></small></div><div id="todayRoutines"></div></div>
+</section>
+<section class="page" id="page-calendar"><div class="panel"><div class="calendar-nav"><button class="icon-btn" id="prevMonth" aria-label="Bulan sebelumnya"><i data-lucide="chevron-left"></i></button><h2 id="monthTitle"></h2><button class="icon-btn" id="nextMonth" aria-label="Bulan berikutnya"><i data-lucide="chevron-right"></i></button></div><div class="cal"><span class="weekday">Min</span><span class="weekday">Sen</span><span class="weekday">Sel</span><span class="weekday">Rab</span><span class="weekday">Kam</span><span class="weekday">Jum</span><span class="weekday">Sab</span></div><div class="cal" id="calendarDays"></div><div style="margin-top:14px"><div class="panel-head"><h2 id="calTaskTitle"></h2><small id="calTaskCount"></small></div><div id="calTasks"></div></div></div></section>
+<section class="page" id="page-tasks"><div class="page-title"><div><h1>Tugas</h1><p>Sekolah, konten, rumah, dan lainnya</p></div></div><div id="taskList"></div></section>
+<section class="page" id="page-routines"><div class="page-title"><div><h1>Jadwal harian</h1><p>Rutinitas berdasarkan hari dan rentang jam</p></div></div><div id="routineList"></div></section>
+<section class="page" id="page-notes"><div class="page-title"><div><h1>Catatan</h1><p>Simpan rincian panjang dan ide bebas</p></div></div><div id="noteList"></div></section>
+</main>
+<button class="fab" id="fab" hidden></button>
+<div class="overlay" id="taskModal"><form class="modal" id="taskForm"><div class="modal-head"><h2 id="taskModalTitle">Tambah tugas</h2><button class="icon-btn" type="button" data-close="taskModal" aria-label="Tutup"><i data-lucide="x"></i></button></div><label class="field">Nama tugas<input id="taskName" required></label><label class="field">Kategori<select id="taskCategory"><option>Sekolah</option><option>Konten</option><option>Rumah</option><option>Lainnya</option></select></label><div class="two"><label class="field">Tanggal<input id="taskDate" type="date" required></label><label class="field">Waktu<input id="taskTime" type="time"></label></div><div class="actions"><button class="secondary" type="button" data-close="taskModal">Batal</button><button class="primary" type="submit">Simpan tugas</button></div></form></div>
+<div class="overlay" id="routineModal"><form class="modal" id="routineForm"><div class="modal-head"><h2>Tambah jadwal harian</h2><button class="icon-btn" type="button" data-close="routineModal" aria-label="Tutup"><i data-lucide="x"></i></button></div><label class="field">Nama kegiatan<input id="routineName" required></label><div class="two"><label class="field">Jam mulai<input id="routineStart" type="time" required></label><label class="field">Jam selesai<input id="routineEnd" type="time" required></label></div><div class="field"><span>Pilih hari</span><button class="secondary" id="allDays" type="button">Pilih semua hari</button><div class="days" id="routineDays"></div></div><div class="actions"><button class="secondary" type="button" data-close="routineModal">Batal</button><button class="primary" type="submit">Simpan harian</button></div></form></div>
+<div class="overlay" id="noteModal"><form class="modal" id="noteForm"><div class="modal-head"><h2>Tambah catatan</h2><button class="icon-btn" type="button" data-close="noteModal" aria-label="Tutup"><i data-lucide="x"></i></button></div><label class="field">Judul<input id="noteTitle" required></label><label class="field">Isi<textarea id="noteContent"></textarea></label><div class="actions"><button class="secondary" type="button" data-close="noteModal">Batal</button><button class="primary" type="submit">Simpan catatan</button></div></form></div>
+<div class="install-alert" id="installAlert"><div class="install-row"><div class="logo"><i data-lucide="download"></i></div><div class="install-copy"><strong>Install Task APK Choy</strong><small>Buka tanpa tampilan browser dan akses dari layar utama.</small></div></div><div class="install-actions"><button class="primary" id="installNow">Install aplikasi</button><button class="secondary" id="installLater">Nanti</button></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
 <script>
-(() => {
-  const firebaseConfig={apiKey:"AIzaSyCpEKb8mi6SOtCf1VUTwt79XTkRxhBBlko",authDomain:"proyek1-475304.firebaseapp.com",projectId:"proyek1-475304",storageBucket:"proyek1-475304.firebasestorage.app",messagingSenderId:"705620835425",appId:"1:705620835425:web:3c691e0e12add3b62cbe20"};
-  const cloudRef=firebase.firestore(firebase.initializeApp(firebaseConfig)).collection("taskku").doc("data");
-  let cloudReady=false,applyingCloud=false,cloudTimer=null;
-  const KEYS={tasks:'taskku_schedules_v2',routines:'taskku_routines_v1',done:'taskku_daily_checks_v2',notes:'taskku_notes_v2'};
-  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-  const pad=n=>String(n).padStart(2,'0');
-  const dateKey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  const parseDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-  const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
-  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
-  const write=(key,value)=>{localStorage.setItem(key,JSON.stringify(value));if(cloudReady&&!applyingCloud){clearTimeout(cloudTimer);cloudTimer=setTimeout(syncCloud,250)}};
-  const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const categoryInfo={
-    Sekolah:{icon:'🎓',color:'var(--school)'},Konten:{icon:'🎬',color:'var(--content)'},
-    Rumah:{icon:'🏠',color:'var(--home)'},Lainnya:{icon:'📌',color:'var(--other)'}
-  };
-  let tasks=read(KEYS.tasks,null);
-  let done=read(KEYS.done,{});
-  let notes=read(KEYS.notes,null);
-  let routines=read(KEYS.routines,[]);
-  if(!Array.isArray(tasks)){
-    const oldTasks=read('taskku_tasks',[]);
-    tasks=oldTasks.map(t=>({id:t.id||uid(),title:t.title||'Tugas',category:t.category||'Lainnya',time:t.time||'',kind:'once',days:[],date:t.date||dateKey(new Date())}));
-    oldTasks.filter(t=>t.status==='selesai').forEach(t=>{done[(t.date||dateKey(new Date()))+'|'+t.id]=true});
-    write(KEYS.tasks,tasks);write(KEYS.done,done);
-  }
-  if(!Array.isArray(notes)){notes=read('taskku_notes',[]);write(KEYS.notes,notes)}
-  let activeDate=new Date();
-  let calendarDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),1);
-  let activeCategory=null;
-  let editingTaskId=null;
-  let currentPage='today';
-
-  if(!tasks.length){
-    tasks=[
-      {id:uid(),title:'Belajar materi besok',category:'Sekolah',time:'19:30',kind:'weekly',days:[1,2,3,4],date:''},
-      {id:uid(),title:'Edit video mingguan',category:'Konten',time:'16:00',kind:'weekly',days:[2,6],date:''},
-      {id:uid(),title:'Ngaji 3 halaman',category:'Rumah',time:'20:00',kind:'weekly',days:[0,1,2,3,4,5,6],date:''}
-    ];
-    write(KEYS.tasks,tasks);
-  }
-
-  function taskOccurs(task,date){
-    return task.kind==='once'?task.date===dateKey(date):(task.days||[]).includes(date.getDay());
-  }
-  function tasksFor(date){return tasks.filter(t=>taskOccurs(t,date)).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'))}
-  function isDone(task,date){return !!done[dateKey(date)+'|'+task.id]}
-  function setDone(task,date,value){const key=dateKey(date)+'|'+task.id;if(value)done[key]=true;else delete done[key];write(KEYS.done,done)}
-  function showStatus(message){const el=$('#status');el.textContent=message;el.classList.add('show');clearTimeout(showStatus.timer);showStatus.timer=setTimeout(()=>el.classList.remove('show'),2200)}
-
-  function renderToday(){
-    $('#dayName').textContent=activeDate.toLocaleDateString('id-ID',{weekday:'long'});
-    $('#dateLabel').textContent=activeDate.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
-    const dayTasks=tasksFor(activeDate);
-    const dailyItems=routines.filter(r=>(r.days||[]).includes(activeDate.getDay()));
-    const scheduled=dayTasks;
-    const cats=['Sekolah','Konten','Rumah'];
-    $('#categoryGrid').innerHTML=cats.map(cat=>{
-      const info=categoryInfo[cat];
-      const count=scheduled.filter(t=>t.category===cat).length;
-      return '<button class="category-card '+(activeCategory===cat?'active':'')+'" data-category="'+cat+'" aria-pressed="'+(activeCategory===cat)+'"><span class="emoji">'+info.icon+'</span><strong>'+cat+'</strong><small>'+count+' tugas</small></button>';
-    }).join('');
-    $('#routineCount').textContent=routines.length+' tugas';
-    $('#dailyRoutines').innerHTML=routines.length?routines.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Belum ada rutinitas harian</strong>Buat jadwal dan pilih semua hari.</div>';
-    const shown=activeCategory?scheduled.filter(t=>t.category===activeCategory):scheduled;
-    $('#dailyHeading').textContent=activeCategory?activeCategory:'Tugas terjadwal';
-    $('#dailyCount').textContent=shown.length+' tugas';
-    $('#dailyTasks').innerHTML=shown.length?shown.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas terjadwal</strong>Pilih kategori lain atau tambahkan tugas baru.</div>';
-    const allToday=[...dayTasks,...dailyItems];
-    const complete=allToday.filter(t=>isDone(t,activeDate)).length;
-    $('#progressText').textContent=complete+' dari '+allToday.length+' selesai';
-    const progress=$('.progress');progress.setAttribute('aria-valuemax',allToday.length);progress.setAttribute('aria-valuenow',complete);
-    $('#progressFill').style.width=(allToday.length?complete/allToday.length*100:0)+'%';
-  }
-
-  function taskHtml(t,date){
-    const checked=isDone(t,date), info=categoryInfo[t.category]||categoryInfo.Lainnya;
-    return '<div class="task-row '+(checked?'done':'')+'"><input class="task-check" type="checkbox" data-check="'+t.id+'" '+(checked?'checked':'')+' aria-label="Tandai '+escapeHtml(t.title)+' selesai"><span class="task-dot" style="background:'+info.color+'"></span><div class="task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+(t.time||'Tanpa waktu')+' · '+escapeHtml(t.category)+'</small></div><div class="row-actions"><button class="row-btn" data-edit="'+t.id+'" aria-label="Edit '+escapeHtml(t.title)+'">✎</button><button class="row-btn danger" data-delete="'+t.id+'" aria-label="Hapus '+escapeHtml(t.title)+'">⌫</button></div></div>';
-  }
-
-  function renderSchedule(){
-    const names=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-    $('#scheduleList').innerHTML=tasks.length?tasks.map(t=>{
-      const info=categoryInfo[t.category]||categoryInfo.Lainnya;
-      const when=t.kind==='once'?parseDate(t.date).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):(t.days||[]).map(d=>names[d]).join(', ');
-      return '<article class="schedule-card"><span class="task-dot" style="background:'+info.color+'"></span><div><h3>'+escapeHtml(t.title)+'</h3><p>'+escapeHtml(t.category)+' · '+(t.time||'Tanpa waktu')+' · '+when+'</p></div><div class="row-actions"><button class="row-btn" data-edit="'+t.id+'" aria-label="Edit '+escapeHtml(t.title)+'">✎</button><button class="row-btn danger" data-delete="'+t.id+'" aria-label="Hapus '+escapeHtml(t.title)+'">⌫</button></div></article>';
-    }).join(''):'<div class="panel empty"><strong>Belum ada jadwal</strong>Tambahkan tugas dan pilih hari kemunculannya.</div>';
-  }
-
-  function renderCalendar(){
-    $('#calendarTitle').textContent=calendarDate.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
-    const year=calendarDate.getFullYear(),month=calendarDate.getMonth();
-    const first=new Date(year,month,1).getDay(),total=new Date(year,month+1,0).getDate();
-    let html='';for(let i=0;i<first;i++)html+='<span class="day blank"></span>';
-    for(let n=1;n<=total;n++){
-      const d=new Date(year,month,n),count=tasksFor(d).length;
-      const cls=['day',dateKey(d)===dateKey(new Date())?'today':'',dateKey(d)===dateKey(activeDate)?'selected':''].filter(Boolean).join(' ');
-      const dots=count?'<span class="day-dots">'+Array.from({length:Math.min(count,3)},()=>'<i class="day-dot"></i>').join('')+(count>3?'<span class="day-more">+</span>':'')+'</span>':'<span class="day-dots"></span>';
-      html+='<button class="'+cls+(d.getDay()===0?' sunday':'')+'" data-date="'+dateKey(d)+'" aria-label="'+d.toLocaleDateString('id-ID',{day:'numeric',month:'long'})+', '+count+' tugas"><strong>'+n+'</strong>'+dots+'</button>';
-    }
-    $('#calendarDays').innerHTML=html;const selected=tasksFor(activeDate);$('#calendarTaskTitle').textContent='Tugas · '+activeDate.toLocaleDateString('id-ID',{day:'numeric',month:'long'});$('#calendarTaskCount').textContent=selected.length+' tugas';$('#calendarTaskList').innerHTML=selected.length?selected.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas</strong>Pilih tanggal lain.</div>';
-  }
-
-  function routineHtml(r,date){const checked=isDone(r,date);return '<div class="task-row '+(checked?'done':'')+'"><input class="task-check" type="checkbox" data-routine-check="'+r.id+'" '+(checked?'checked':'')+'><span class="task-dot" style="background:var(--accent)"></span><div class="task-copy"><strong>'+escapeHtml(r.title)+'</strong><small>'+r.start+' – '+r.end+'</small></div><button class="row-btn danger" data-delete-routine="'+r.id+'">⌫</button></div>'}
-  function renderRoutines(){const names=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];$('#routineList').innerHTML=routines.length?routines.map(r=>'<article class="schedule-card"><span class="task-dot" style="background:var(--accent)"></span><div><h3>'+escapeHtml(r.title)+'</h3><p>'+r.start+' – '+r.end+' · '+r.days.map(d=>names[d]).join(', ')+'</p></div><button class="row-btn danger" data-delete-routine="'+r.id+'">⌫</button></article>').join(''):'<div class="panel empty"><strong>Belum ada jadwal harian</strong>Tambahkan kegiatan dan pilih harinya.</div>'}
-  function renderNotes(){
-    $('#notesList').innerHTML=notes.length?notes.map(n=>'<article class="note-card"><div class="section-head"><h3>'+escapeHtml(n.title)+'</h3><button class="row-btn danger" data-delete-note="'+n.id+'" aria-label="Hapus '+escapeHtml(n.title)+'">⌫</button></div><p>'+escapeHtml(n.content||'Catatan kosong')+'</p></article>').join(''):'<div class="panel empty"><strong>Belum ada catatan</strong>Simpan rincian panjang yang tidak cocok menjadi checklist.</div>';
-  }
-
-  function renderAll(){renderToday();renderSchedule();renderRoutines();renderCalendar();renderNotes()}
-  function moveDay(amount){activeDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),activeDate.getDate()+amount);activeCategory=null;renderToday()}
-
-  function showPage(name){
-    $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
-    $$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
-    currentPage=name;const labels={calendar:['Kalender','Pilih tanggal dan lihat tugasnya'],tasks:['Tugas','Atur tugas berdasarkan kategori'],today:['Hari ini','Lihat semua rencana hari ini'],routines:['Harian','Atur jadwal berulang'],notes:['Catatan','Simpan rincian dan ide bebas']};
-    $('#pageTitle').textContent=labels[name][0];$('#pageSubtitle').textContent=labels[name][1];
-    $('.fab').hidden=name==='notes'||name==='calendar';$('.fab').textContent=name==='routines'?'＋ Tambah harian':'＋ Tambah tugas';
-    if(name==='calendar')renderCalendar();if(name==='tasks')renderSchedule();if(name==='routines')renderRoutines();if(name==='notes')renderNotes();
-  }
-
-  function openTask(task){
-    editingTaskId=task?.id||null;
-    $('#taskModalTitle').textContent=task?'Edit tugas':'Tambah tugas';
-    $('#taskName').value=task?.title||'';$('#taskCategory').value=task?.category||'Sekolah';$('#taskTime').value=task?.time||'';
-    const kind=task?.kind||'weekly';$('input[name="taskKind"][value="'+kind+'"]').checked=true;
-    $$('input[name="weekDay"]').forEach(c=>c.checked=(task?.days||[activeDate.getDay()]).includes(Number(c.value)));
-    $('#taskDate').value=task?.date||dateKey(activeDate);toggleKind();
-    $('#taskOverlay').classList.add('open');$('#taskOverlay').setAttribute('aria-hidden','false');setTimeout(()=>$('#taskName').focus(),50);
-  }
-  function closeTask(){editingTaskId=null;$('#taskOverlay').classList.remove('open');$('#taskOverlay').setAttribute('aria-hidden','true')}
-  function toggleKind(){const once=$('input[name="taskKind"]:checked').value==='once';$('#weekDaysField').hidden=once;$('#onceDateField').hidden=!once;$('#taskDate').required=once}
-
-  $$('.nav-btn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-  $('#prevDay').addEventListener('click',()=>moveDay(-1));$('#nextDay').addEventListener('click',()=>moveDay(1));
-  $('#openCalendar').addEventListener('click',()=>{calendarDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),1);showPage('calendar')});
-  $('#categoryGrid').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=activeCategory===b.dataset.category?null:b.dataset.category;renderToday()});
-  function handleDailyCheck(e){if(!e.target.dataset.check)return;const task=tasks.find(t=>t.id===e.target.dataset.check);if(task){setDone(task,activeDate,e.target.checked);renderToday()}}
-  $('#dailyTasks').addEventListener('change',handleDailyCheck);
-  $('#dailyRoutines').addEventListener('change',e=>{if(e.target.dataset.routineCheck){const r=routines.find(x=>x.id===e.target.dataset.routineCheck);setDone(r,activeDate,e.target.checked);renderToday()}});
-  $('#calendarTaskList').addEventListener('change',handleDailyCheck);
-  document.addEventListener('click',e=>{
-    const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
-    if(edit)openTask(tasks.find(t=>t.id===edit.dataset.edit));
-    if(del&&confirm('Hapus tugas ini?')){tasks=tasks.filter(t=>t.id!==del.dataset.delete);write(KEYS.tasks,tasks);renderAll();showStatus('Tugas dihapus')}
-  });
-  $('[data-open-task]').forEach(b=>b.addEventListener('click',()=>openTask()));
-  $('#mainFab').addEventListener('click',()=>currentPage==='routines'?openRoutine():openTask());
-  $$('[data-close-task]').forEach(b=>b.addEventListener('click',closeTask));
-  $('#selectEveryDay').addEventListener('click',()=>{$$('input[name="weekDay"]').forEach(c=>c.checked=true)});
-  $$('input[name="taskKind"]').forEach(r=>r.addEventListener('change',toggleKind));
-  $('#taskForm').addEventListener('submit',e=>{
-    e.preventDefault();const kind=$('input[name="taskKind"]:checked').value;
-    const days=$$('input[name="weekDay"]:checked').map(c=>Number(c.value));
-    if(kind==='weekly'&&!days.length){showStatus('Pilih minimal satu hari');return}
-    const data={id:editingTaskId||uid(),title:$('#taskName').value.trim(),category:$('#taskCategory').value,time:$('#taskTime').value,kind,days:kind==='weekly'?days:[],date:kind==='once'?$('#taskDate').value:''};
-    const index=tasks.findIndex(t=>t.id===editingTaskId);if(index>=0)tasks[index]=data;else tasks.push(data);
-    write(KEYS.tasks,tasks);closeTask();renderAll();showStatus(index>=0?'Tugas diperbarui':'Tugas disimpan')
-  });
-  $('#prevMonth').addEventListener('click',()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()-1,1);renderCalendar()});
-  $('#nextMonth').addEventListener('click',()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()+1,1);renderCalendar()});
-  $('#calendarDays').addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;activeDate=parseDate(b.dataset.date);activeCategory=null;renderCalendar()});
-
-  function openRoutine(){$('#routineForm').reset();$('#routineOverlay').classList.add('open')}function closeRoutine(){$('#routineOverlay').classList.remove('open')}$('#openRoutine').addEventListener('click',openRoutine);$('[data-close-routine]').forEach(b=>b.addEventListener('click',closeRoutine));$('#routineEveryDay').addEventListener('click',()=>$('input[name="routineDay"]').forEach(c=>c.checked=true));$('#routineForm').addEventListener('submit',e=>{e.preventDefault();const days=$('input[name="routineDay"]:checked').map(c=>Number(c.value));if(!days.length){showStatus('Pilih minimal satu hari');return}routines.push({id:uid(),title:$('#routineName').value.trim(),start:$('#routineStart').value,end:$('#routineEnd').value,days});write(KEYS.routines,routines);closeRoutine();renderAll()});
-  $('#openNote').addEventListener('click',()=>{$('#noteForm').reset();$('#noteOverlay').classList.add('open');$('#noteOverlay').setAttribute('aria-hidden','false');setTimeout(()=>$('#noteTitle').focus(),50)});
-  $$('[data-close-note]').forEach(b=>b.addEventListener('click',()=>{$('#noteOverlay').classList.remove('open');$('#noteOverlay').setAttribute('aria-hidden','true')}));
-  $('#noteForm').addEventListener('submit',e=>{e.preventDefault();notes.unshift({id:uid(),title:$('#noteTitle').value.trim(),content:$('#noteContent').value.trim()});write(KEYS.notes,notes);$('#noteOverlay').classList.remove('open');renderNotes();showStatus('Catatan disimpan')});
-  $('#notesList').addEventListener('click',e=>{const b=e.target.closest('[data-delete-note]');if(b&&confirm('Hapus catatan ini?')){notes=notes.filter(n=>n.id!==b.dataset.deleteNote);write(KEYS.notes,notes);renderNotes();showStatus('Catatan dihapus')}});
-
-  let startX=0;$('#dateSwipe').addEventListener('pointerdown',e=>startX=e.clientX);$('#dateSwipe').addEventListener('pointerup',e=>{const dx=e.clientX-startX;if(Math.abs(dx)>48)moveDay(dx>0?-1:1)});
-  [$('#taskOverlay'),$('#noteOverlay')].forEach(o=>o.addEventListener('click',e=>{if(e.target===o){if(o.id==='taskOverlay')closeTask();else o.classList.remove('open')}}));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTask();$('#noteOverlay').classList.remove('open')}});
-  let deferredPrompt=null;
-  const installBanner=$('#installBanner'),installGuide=$('#installGuide');
-  $('#installTop').addEventListener('click',()=>$('#installNow').click());
-  $('#installLater').addEventListener('click',()=>{installBanner.classList.remove('show');localStorage.setItem('pwaInstallDismissed','1')});
-  function closeInstallGuide(){installGuide.classList.remove('open')}
-  $('#closeGuide').addEventListener('click',closeInstallGuide);$('#understandGuide').addEventListener('click',closeInstallGuide);
-  installGuide.addEventListener('click',e=>{if(e.target===installGuide)closeInstallGuide()});
-  $('#installNow').addEventListener('click',async()=>{
-    installBanner.classList.remove('show');
-    if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}
-    else installGuide.classList.add('open');
-  });
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('pwaInstallDismissed'))setTimeout(()=>installBanner.classList.add('show'),1800)});
-  window.addEventListener('appinstalled',()=>{installBanner.classList.remove('show');showStatus('Task Ku berhasil diinstall')});
-  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone&&!localStorage.getItem('pwaInstallDismissed'))setTimeout(()=>installBanner.classList.add('show'),1800);
-
-  function syncCloud(){cloudRef.set({tasks,routines,done,notes,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>showStatus('Sinkronisasi gagal. Periksa Firestore Rules.'))}
-  cloudRef.get().then(snapshot=>{if(snapshot.exists){const d=snapshot.data();applyingCloud=true;tasks=d.tasks||[];routines=d.routines||[];done=d.done||{};notes=d.notes||[];Object.entries({[KEYS.tasks]:tasks,[KEYS.routines]:routines,[KEYS.done]:done,[KEYS.notes]:notes}).forEach(([k,v])=>localStorage.setItem(k,JSON.stringify(v)));applyingCloud=false;renderAll()}else syncCloud();cloudReady=true;cloudRef.onSnapshot(snap=>{if(!snap.exists||snap.metadata.hasPendingWrites)return;const d=snap.data();applyingCloud=true;tasks=d.tasks||[];routines=d.routines||[];done=d.done||{};notes=d.notes||[];applyingCloud=false;renderAll()},()=>showStatus('Tidak dapat membaca Firestore. Periksa Rules.'))}).catch(()=>showStatus('Firestore belum dapat diakses. Data tetap lokal.'));
-  renderAll();
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+(()=>{
+const cfg={apiKey:"AIzaSyCpEKb8mi6SOtCf1VUTwt79XTkRxhBBlko",authDomain:"proyek1-475304.firebaseapp.com",projectId:"proyek1-475304",storageBucket:"proyek1-475304.firebasestorage.app",messagingSenderId:"705620835425",appId:"1:705620835425:web:3c691e0e12add3b62cbe20"};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),parse=s=>{const a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2])},id=()=>crypto.randomUUID?.()||Date.now().toString(36),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const K={tasks:'taskku_schedules_v2',routines:'taskku_routines_v1',done:'taskku_daily_checks_v2',notes:'taskku_notes_v2'},read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}},local=()=>{localStorage.setItem(K.tasks,JSON.stringify(tasks));localStorage.setItem(K.routines,JSON.stringify(routines));localStorage.setItem(K.done,JSON.stringify(done));localStorage.setItem(K.notes,JSON.stringify(notes))};
+let tasks=read(K.tasks,[]),routines=read(K.routines,[]),done=read(K.done,{}),notes=read(K.notes,[]),date=new Date(),month=new Date(date.getFullYear(),date.getMonth(),1),page='today',filter=null,editTask=null,cloudReady=false,applying=false,timer,installPrompt;
+const colors={Sekolah:'var(--school,#386fd0)',Konten:'var(--content,#9a5598)',Rumah:'var(--home,#bf6f23)',Lainnya:'var(--muted)'},icons={Sekolah:'graduation-cap',Konten:'video',Rumah:'house',Lainnya:'pin'};
+const cloud=firebase.firestore(firebase.initializeApp(cfg)).collection('taskku').doc('data');
+function toast(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('#toast').classList.remove('show'),2200)}
+function save(){local();if(cloudReady&&!applying){clearTimeout(timer);timer=setTimeout(()=>cloud.set({tasks,routines,done,notes,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>$('#syncText').textContent='Tersinkron Firebase').catch(()=>toast('Sinkronisasi gagal. Periksa internet.')),250)}}
+function occurs(t,d){return t.kind==='weekly'?(t.days||[]).includes(d.getDay()):t.date===key(d)}function dayTasks(d){return tasks.filter(t=>occurs(t,d)).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'))}function dayRoutines(d){return routines.filter(r=>(r.days||[]).includes(d.getDay())).sort((a,b)=>r.start.localeCompare(b.start))}function checked(x,d){return !!done[key(d)+'|'+x.id]}function setCheck(x,d,v){const k=key(d)+'|'+x.id;v?done[k]=true:delete done[k];save()}
+function taskRow(t,d,editable=false){return '<div class="task '+(checked(t,d)?'done':'')+'"><input type="checkbox" data-check="'+t.id+'" '+(checked(t,d)?'checked':'')+' aria-label="Tandai selesai"><i class="dot" style="background:'+colors[t.category]+'"></i><div><strong>'+esc(t.title)+'</strong><small>'+(t.time||'Tanpa waktu')+' · '+esc(t.category)+'</small></div>'+(editable?'<div class="mini-actions"><button class="mini" data-edit-task="'+t.id+'" aria-label="Edit"><i data-lucide="pencil"></i></button><button class="mini danger" data-del-task="'+t.id+'" aria-label="Hapus"><i data-lucide="trash-2"></i></button></div>':'<span></span>')+'</div>'}
+function routineRow(r,d,editable=false){return '<div class="task '+(checked(r,d)?'done':'')+'"><input type="checkbox" data-rcheck="'+r.id+'" '+(checked(r,d)?'checked':'')+' aria-label="Tandai selesai"><i class="dot" style="background:var(--accent)"></i><div><strong>'+esc(r.title)+'</strong><small>'+r.start+'–'+r.end+'</small></div>'+(editable?'<button class="mini danger" data-del-routine="'+r.id+'" aria-label="Hapus"><i data-lucide="trash-2"></i></button>':'<span></span>')+'</div>'}
+function empty(a,b){return '<div class="empty"><strong>'+a+'</strong>'+b+'</div>'}function iconsNow(){lucide.createIcons({attrs:{'stroke-width':1.8}})}
+function renderToday(){const ts=dayTasks(date),rs=dayRoutines(date),cats=['Sekolah','Konten','Rumah'];$('#dayName').textContent=date.toLocaleDateString('id-ID',{weekday:'long'});$('#dateLabel').textContent=date.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});$('#categories').innerHTML=cats.map(c=>'<button class="category '+(filter===c?'active':'')+'" data-cat="'+c+'"><i data-lucide="'+icons[c]+'"></i><strong>'+c+'</strong><small>'+ts.filter(t=>t.category===c).length+' tugas</small></button>').join('');const shown=filter?ts.filter(t=>t.category===filter):ts;$('#scheduledTitle').textContent=filter||'Tugas terjadwal';$('#scheduledCount').textContent=shown.length+' tugas';$('#todayTasks').innerHTML=shown.length?shown.map(t=>taskRow(t,date)).join(''):empty('Tidak ada tugas','Pilih kategori lain atau tambah dari menu Tugas.');$('#routineCount').textContent=rs.length+' kegiatan';$('#todayRoutines').innerHTML=rs.length?rs.map(r=>routineRow(r,date)).join(''):empty('Tidak ada jadwal harian','Tambahkan dari menu Harian.');const all=[...ts,...rs],n=all.filter(x=>checked(x,date)).length;$('#progressText').textContent=n+' dari '+all.length;$('#progressFill').style.width=(all.length?n/all.length*100:0)+'%';iconsNow()}
+function renderCalendar(){const y=month.getFullYear(),m=month.getMonth(),first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();$('#monthTitle').textContent=month.toLocaleDateString('id-ID',{month:'long',year:'numeric'});let h='';for(let i=0;i<first;i++)h+='<span class="day blank"></span>';for(let n=1;n<=last;n++){const d=new Date(y,m,n),count=dayTasks(d).length,dots='<span class="dots">'+Array(Math.min(count,3)).fill('<i></i>').join('')+'</span>';h+='<button class="day '+(key(d)===key(new Date())?'today ':'')+(key(d)===key(date)?'selected ':'')+(d.getDay()===0?'sun':'')+'" data-cal="'+key(d)+'"><b>'+n+'</b>'+dots+'</button>'}$('#calendarDays').innerHTML=h;const ts=dayTasks(date);$('#calTaskTitle').textContent='Tugas · '+date.toLocaleDateString('id-ID',{day:'numeric',month:'long'});$('#calTaskCount').textContent=ts.length+' tugas';$('#calTasks').innerHTML=ts.length?ts.map(t=>taskRow(t,date)).join(''):empty('Tidak ada tugas','Pilih tanggal lain.');iconsNow()}
+function renderLists(){$('#taskList').innerHTML=tasks.length?tasks.map(t=>'<article class="list-card"><i class="dot" style="background:'+colors[t.category]+'"></i><div><h3>'+esc(t.title)+'</h3><p>'+esc(t.category)+' · '+(t.date?parse(t.date).toLocaleDateString('id-ID',{day:'numeric',month:'short'}):(t.days||[]).join(', '))+' · '+(t.time||'Tanpa waktu')+'</p></div><div class="mini-actions"><button class="mini" data-edit-task="'+t.id+'"><i data-lucide="pencil"></i></button><button class="mini danger" data-del-task="'+t.id+'"><i data-lucide="trash-2"></i></button></div></article>').join(''):empty('Belum ada tugas','Tekan tombol tambah untuk membuat tugas.');$('#routineList').innerHTML=routines.length?routines.map(r=>'<article class="list-card"><i class="dot" style="background:var(--accent)"></i><div><h3>'+esc(r.title)+'</h3><p>'+r.start+'–'+r.end+' · '+r.days.length+' hari</p></div><button class="mini danger" data-del-routine="'+r.id+'"><i data-lucide="trash-2"></i></button></article>').join(''):empty('Belum ada jadwal harian','Tekan tombol tambah untuk membuat rutinitas.');$('#noteList').innerHTML=notes.length?notes.map(n=>'<article class="list-card"><i class="dot" style="background:var(--accent)"></i><div><h3>'+esc(n.title)+'</h3><p>'+esc(n.content||'Catatan kosong')+'</p></div><button class="mini danger" data-del-note="'+n.id+'"><i data-lucide="trash-2"></i></button></article>').join(''):empty('Belum ada catatan','Tekan tombol tambah untuk menulis catatan.');iconsNow()}
+function render(){renderToday();renderCalendar();renderLists()}
+function showPage(p){page=p;$$('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));$$('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$('#fab').hidden=!['tasks','routines','notes'].includes(p);$('#fab').textContent=p==='tasks'?'+ Tambah tugas':p==='routines'?'+ Tambah harian':'+ Tambah catatan';if(p==='calendar')renderCalendar();iconsNow()}
+function openModal(id){$('#'+id).classList.add('open');$('#'+id).setAttribute('aria-hidden','false')}function closeModal(id){$('#'+id).classList.remove('open');$('#'+id).setAttribute('aria-hidden','true')}
+$$('.nav-btn').forEach(b=>b.onclick=()=>showPage(b.dataset.page));$('#categories').onclick=e=>{const b=e.target.closest('[data-cat]');if(b){filter=filter===b.dataset.cat?null:b.dataset.cat;renderToday()}};$('#prevDay').onclick=()=>{date.setDate(date.getDate()-1);filter=null;renderToday()};$('#nextDay').onclick=()=>{date.setDate(date.getDate()+1);filter=null;renderToday()};$('#datePick').onclick=()=>{month=new Date(date.getFullYear(),date.getMonth(),1);showPage('calendar')};$('#prevMonth').onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1);renderCalendar()};$('#nextMonth').onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCalendar()};$('#calendarDays').onclick=e=>{const b=e.target.closest('[data-cal]');if(b){date=parse(b.dataset.cal);renderCalendar()}};
+function checkHandler(e){if(e.target.dataset.check){const t=tasks.find(x=>x.id===e.target.dataset.check);if(t)setCheck(t,date,e.target.checked)}if(e.target.dataset.rcheck){const r=routines.find(x=>x.id===e.target.dataset.rcheck);if(r)setCheck(r,date,e.target.checked)}renderToday();if(page==='calendar')renderCalendar()}['todayTasks','todayRoutines','calTasks'].forEach(id=>$('#'+id).onchange=checkHandler);
+$('#routineDays').innerHTML=['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map((n,i)=>'<label class="daycheck"><input type="checkbox" value="'+([1,2,3,4,5,6,0][i])+'"><span>'+n+'</span></label>').join('');
+$('#fab').onclick=()=>{if(page==='tasks'){editTask=null;$('#taskForm').reset();$('#taskDate').value=key(date);openModal('taskModal')}else if(page==='routines'){$('#routineForm').reset();openModal('routineModal')}else{$('#noteForm').reset();openModal('noteModal')}};$$('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));$('#allDays').onclick=()=>$$('#routineDays input').forEach(x=>x.checked=true);
+$('#taskForm').onsubmit=e=>{e.preventDefault();const data={id:editTask||id(),title:$('#taskName').value.trim(),category:$('#taskCategory').value,date:$('#taskDate').value,time:$('#taskTime').value,kind:'once',days:[]},i=tasks.findIndex(x=>x.id===editTask);i<0?tasks.push(data):tasks[i]=data;save();closeModal('taskModal');render();toast('Tugas disimpan')};
+$('#routineForm').onsubmit=e=>{e.preventDefault();const days=$$('#routineDays input:checked').map(x=>Number(x.value));if(!days.length)return toast('Pilih minimal satu hari');if($('#routineEnd').value<=$('#routineStart').value)return toast('Jam selesai harus setelah jam mulai');routines.push({id:id(),title:$('#routineName').value.trim(),start:$('#routineStart').value,end:$('#routineEnd').value,days});save();closeModal('routineModal');render();toast('Jadwal harian disimpan')};
+$('#noteForm').onsubmit=e=>{e.preventDefault();notes.unshift({id:id(),title:$('#noteTitle').value.trim(),content:$('#noteContent').value.trim()});save();closeModal('noteModal');renderLists();toast('Catatan disimpan')};
+document.onclick=e=>{const edit=e.target.closest('[data-edit-task]'),dt=e.target.closest('[data-del-task]'),dr=e.target.closest('[data-del-routine]'),dn=e.target.closest('[data-del-note]');if(edit){const t=tasks.find(x=>x.id===edit.dataset.editTask);editTask=t.id;$('#taskName').value=t.title;$('#taskCategory').value=t.category;$('#taskDate').value=t.date;$('#taskTime').value=t.time;openModal('taskModal')}if(dt&&confirm('Hapus tugas ini?')){tasks=tasks.filter(x=>x.id!==dt.dataset.delTask);save();render()}if(dr&&confirm('Hapus jadwal harian ini?')){routines=routines.filter(x=>x.id!==dr.dataset.delRoutine);save();render()}if(dn&&confirm('Hapus catatan ini?')){notes=notes.filter(x=>x.id!==dn.dataset.delNote);save();renderLists()}};
+const savedTheme=localStorage.getItem('taskku_theme');if(savedTheme==='dark')document.documentElement.classList.add('dark');$('#themeBtn').onclick=()=>{document.documentElement.classList.toggle('dark');localStorage.setItem('taskku_theme',document.documentElement.classList.contains('dark')?'dark':'light');$('#themeBtn').innerHTML='<i data-lucide="'+(document.documentElement.classList.contains('dark')?'sun':'moon')+'"></i>';iconsNow()};
+cloud.get().then(s=>{if(s.exists){const d=s.data();applying=true;tasks=d.tasks||tasks;routines=d.routines||routines;done=d.done||done;notes=d.notes||notes;local();applying=false;render()}else cloud.set({tasks,routines,done,notes});cloudReady=true;$('#syncText').textContent='Tersinkron Firebase';cloud.onSnapshot(x=>{if(!x.exists||x.metadata.hasPendingWrites)return;const d=x.data();applying=true;tasks=d.tasks||[];routines=d.routines||[];done=d.done||{};notes=d.notes||[];local();applying=false;render()})}).catch(()=>{$('#syncText').textContent='Mode lokal';toast('Firebase belum terhubung')});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('#installAlert').classList.add('show')});$('#installNow').onclick=async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('#installAlert').classList.remove('show')};$('#installLater').onclick=()=>$('#installAlert').classList.remove('show');window.addEventListener('appinstalled',()=>{$('#installAlert').classList.remove('show');toast('Aplikasi berhasil diinstall')});
+let sx=0;$('#datebar').onpointerdown=e=>sx=e.clientX;$('#datebar').onpointerup=e=>{const dx=e.clientX-sx;if(Math.abs(dx)>45){date.setDate(date.getDate()+(dx>0?-1:1));renderToday()}};
+render();iconsNow();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');
 })();
 </script>
-</body>
-</html>
+</body></html>
