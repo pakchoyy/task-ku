@@ -34,35 +34,35 @@
     .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(216,231,233,.9);padding:14px 22px;display:flex;align-items:center;gap:12px}.topbar-copy{flex:1}.install-top-btn{border:0;border-radius:11px;background:var(--accent-soft);color:var(--accent);min-height:42px;padding:0 13px;font-weight:800;white-space:nowrap}
     .topbar strong{font-size:1rem}
     .topbar span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
-    .page{display:none;max-width:920px;margin:auto;padding:20px 22px 110px}
+    .page{display:none;max-width:860px;margin:auto;padding:16px 18px 104px}
     .page.active{display:block}
-    .date-nav{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:8px;touch-action:pan-y}
+    .date-nav{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:6px;touch-action:pan-y}
     .icon-btn{border:0;border-radius:12px;background:var(--surface-soft);color:var(--text);width:44px;height:44px;display:grid;place-items:center;font-size:1.35rem}
     .date-copy{text-align:center;user-select:none}
     .date-copy strong{display:block;text-transform:capitalize}
     .date-copy span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
-    .progress-wrap{margin:18px 3px}
+    .progress-wrap{margin:13px 3px}
     .progress-head{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.78rem}
     .progress-head strong{color:var(--text);font-variant-numeric:tabular-nums}
     .progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px}
     .progress>span{display:block;height:100%;background:var(--accent);transition:width .15s}
-    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-    .category-card{border:2px solid transparent;border-radius:15px;background:var(--surface);color:var(--text);min-height:82px;padding:10px 8px;box-shadow:0 5px 18px rgba(30,79,88,.06)}
+    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .category-card{border:2px solid transparent;border-radius:15px;background:var(--surface);color:var(--text);min-height:68px;padding:7px 6px;box-shadow:0 5px 18px rgba(30,79,88,.06)}
     .category-card.active{border-color:var(--accent);background:var(--accent-soft)}
-    .category-card .emoji{display:block;font-size:1.3rem;margin-bottom:3px}
+    .category-card .emoji{display:block;font-size:1.15rem;margin-bottom:2px}
     .category-card strong{display:block}
     .category-card small{color:var(--muted)}
-    .panel{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:18px}
+    .panel{background:var(--surface);border-radius:15px;box-shadow:0 7px 22px rgba(30,79,88,.07);padding:14px;margin-bottom:14px}
     .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
     .section-head h2,.section-head h3{margin:0}
     .section-head h2{font-size:1.1rem}.section-head h3{font-size:1rem}
     .section-head span{color:var(--muted);font-size:.75rem}
-    .task-row{display:grid;grid-template-columns:28px 10px 1fr auto;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 12px;margin-bottom:9px;transition:transform .15s,box-shadow .15s}.task-section+.task-section{margin-top:18px}.daily-panel{background:linear-gradient(145deg,#ffffff,#effaf8);border:1px solid #cde9e5}.daily-panel .task-row{background:#fff}
+    .task-row{display:grid;grid-template-columns:28px 10px 1fr auto;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:10px 10px;margin-bottom:7px;transition:transform .15s,box-shadow .15s}.task-section+.task-section{margin-top:14px}.daily-panel{background:linear-gradient(145deg,#ffffff,#effaf8);border:1px solid #cde9e5}.daily-panel .task-row{background:#fff}
     .task-row:last-child{margin-bottom:0}
-    .task-check{width:22px;height:22px;accent-color:var(--accent)}
+    .task-check{width:20px;height:20px;accent-color:var(--accent)}
     .task-dot{width:9px;height:9px;border-radius:50%}
     .task-copy{min-width:0}
-    .task-copy strong{display:block;font-size:.92rem;overflow-wrap:break-word}
+    .task-copy strong{display:block;font-size:.87rem;overflow-wrap:break-word}
     .task-copy small{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}
     .task-row.done .task-copy strong{text-decoration:line-through;color:var(--muted)}
     .row-actions{display:flex;gap:3px}
@@ -76,11 +76,11 @@
     .fab{position:fixed;right:24px;bottom:24px;z-index:25;border:0;border-radius:999px;min-height:52px;padding:0 19px;background:var(--accent);color:#fff;box-shadow:0 10px 24px rgba(8,127,131,.28);font-weight:800}
     .calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
     .calendar-head h2{margin:0;text-transform:capitalize;font-size:1.1rem}
-    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-    .weekday{text-align:center;color:var(--muted);font-size:.72rem;padding:4px}
-    .day{border:1px solid transparent;border-radius:12px;background:var(--bg);color:var(--text);min-height:62px;padding:7px 4px;text-align:center}
-    .day.blank{visibility:hidden}.day.today{border-color:var(--accent)}.day.selected{background:var(--accent);color:#fff}
-    .day small{display:block;margin-top:5px;opacity:.8}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .weekday{text-align:center;color:var(--muted);font-size:.68rem;font-weight:800;padding:5px 2px}.weekday:first-child{color:var(--danger)}
+    .day{border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);min-height:48px;padding:5px 2px;text-align:center;position:relative}
+    .day.blank{visibility:hidden}.day.today{border-color:var(--accent);background:var(--accent-soft)}.day.selected{background:linear-gradient(135deg,#17c9a2,#1390b5);color:#fff;box-shadow:0 5px 12px rgba(19,144,181,.2)}
+    .day.sunday:not(.selected){color:var(--danger)}.day strong{display:block;font-size:.8rem}.day-dots{display:flex;justify-content:center;gap:2px;margin-top:5px;min-height:4px}.day-dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.65}.day-more{font-size:.57rem;line-height:1;color:inherit;opacity:.7}
     .schedule-list{display:grid;gap:10px}
     .schedule-card{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;grid-template-columns:10px 1fr auto;gap:11px;align-items:start}
     .schedule-card h3{font-size:.95rem;margin:0 0 4px}
@@ -110,15 +110,15 @@
     .install-banner{display:none;position:fixed;left:16px;right:16px;bottom:92px;z-index:70;max-width:430px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgba(23,52,58,.2);padding:15px}
     .install-banner.show{display:block}.install-info{display:grid;grid-template-columns:48px 1fr;gap:11px;align-items:center;margin-bottom:12px}.install-icon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#17c9a2,#1390b5);display:grid;place-items:center;font-size:1.45rem}.install-info h3{font-size:.95rem;margin:0 0 3px}.install-info p{font-size:.78rem;color:var(--muted);margin:0}.install-actions{display:flex;gap:8px}.install-actions .primary{flex:1}
     .guide-overlay{position:fixed;inset:0;z-index:75;background:rgba(9,28,31,.48);display:none;align-items:flex-end;justify-content:center}.guide-overlay.open{display:flex}.guide-box{background:var(--surface);border-radius:22px 22px 0 0;width:min(100%,500px);padding:21px 20px calc(24px + env(safe-area-inset-bottom))}.guide-box h2{font-size:1.1rem;margin:0 0 4px}.guide-box>p{color:var(--muted);font-size:.82rem;margin:0 0 14px}.guide-step{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:10px 0}.guide-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.guide-step p{margin:2px 0 0;font-size:.86rem}
-    .nav-icon{display:block;font-size:1.45rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1.55rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
+    .nav-icon{display:block;font-size:1.45rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1.4rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
     @media(max-width:720px){
-      .side{display:none}.app{margin:0}.topbar{padding:12px 15px}.page{padding:14px 14px 100px}
-      .category-grid{gap:7px}.category-card{min-height:76px;padding-inline:4px}
+      .side{display:none}.app{margin:0}.topbar{padding:10px 13px}.page{padding:10px 11px 96px}
+      .category-grid{gap:6px}.category-card{min-height:64px;padding-inline:3px}
       .bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);inset:auto 0 0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-      .bottom-nav .nav-btn{display:grid;justify-items:center;gap:3px;color:var(--muted);padding:5px 4px;min-height:62px;font-size:.74rem}
+      .bottom-nav .nav-btn{display:grid;justify-items:center;gap:3px;color:var(--muted);padding:5px 4px;min-height:58px;font-size:.7rem}
       .bottom-nav .nav-btn.active{background:transparent;color:var(--accent)}
       .fab{right:16px;bottom:90px}.overlay{padding:0}.modal{border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
-      .calendar-grid{gap:3px}.day{min-height:54px}.row-actions{display:none}
+      .calendar-grid{gap:3px}.day{min-height:46px}.row-actions{display:none}
     }
     @media(max-width:350px){.category-card small{display:none}.page{padding-inline:10px}.days{gap:3px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
@@ -154,13 +154,13 @@
           <div class="progress" role="progressbar" aria-label="Progres tugas harian" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><span id="progressFill"></span></div>
         </div>
         <div class="category-grid" id="categoryGrid" aria-label="Filter kategori"></div>
-        <section class="panel daily-panel task-section">
-          <div class="section-head"><div><h2>☀️ Tugas harian</h2><span>Rutinitas yang muncul setiap hari</span></div><span id="routineCount"></span></div>
-          <div id="dailyRoutines"></div>
-        </section>
         <section class="panel task-section">
           <div class="section-head"><h2 id="dailyHeading">Tugas terjadwal</h2><span id="dailyCount"></span></div>
           <div id="dailyTasks"></div>
+        </section>
+        <section class="panel daily-panel task-section">
+          <div class="section-head"><div><h2>☀️ Tugas harian</h2><span>Rutinitas yang muncul setiap hari</span></div><span id="routineCount"></span></div>
+          <div id="dailyRoutines"></div>
         </section>
       </section>
 
@@ -343,7 +343,8 @@
     for(let n=1;n<=total;n++){
       const d=new Date(year,month,n),count=tasksFor(d).length;
       const cls=['day',dateKey(d)===dateKey(new Date())?'today':'',dateKey(d)===dateKey(activeDate)?'selected':''].filter(Boolean).join(' ');
-      html+='<button class="'+cls+'" data-date="'+dateKey(d)+'"><strong>'+n+'</strong><small>'+count+(count===1?' tugas':' tugas')+'</small></button>';
+      const dots=count?'<span class="day-dots">'+Array.from({length:Math.min(count,3)},()=>'<i class="day-dot"></i>').join('')+(count>3?'<span class="day-more">+</span>':'')+'</span>':'<span class="day-dots"></span>';
+      html+='<button class="'+cls+(d.getDay()===0?' sunday':'')+'" data-date="'+dateKey(d)+'" aria-label="'+d.toLocaleDateString('id-ID',{day:'numeric',month:'long'})+', '+count+' tugas"><strong>'+n+'</strong>'+dots+'</button>';
     }
     $('#calendarDays').innerHTML=html;
   }
