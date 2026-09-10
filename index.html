@@ -267,8 +267,13 @@
 </div>
 <div class="status" id="status" role="status" aria-live="polite"></div>
 
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
 <script>
 (() => {
+  const firebaseConfig={apiKey:"AIzaSyCpEKb8mi6SOtCf1VUTwt79XTkRxhBBlko",authDomain:"proyek1-475304.firebaseapp.com",projectId:"proyek1-475304",storageBucket:"proyek1-475304.firebasestorage.app",messagingSenderId:"705620835425",appId:"1:705620835425:web:3c691e0e12add3b62cbe20"};
+  const cloudRef=firebase.firestore(firebase.initializeApp(firebaseConfig)).collection("taskku").doc("data");
+  let cloudReady=false,applyingCloud=false,cloudTimer=null;
   const KEYS={tasks:'taskku_schedules_v2',routines:'taskku_routines_v1',done:'taskku_daily_checks_v2',notes:'taskku_notes_v2'};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const pad=n=>String(n).padStart(2,'0');
@@ -276,7 +281,7 @@
   const parseDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
   const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
-  const write=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+  const write=(key,value)=>{localStorage.setItem(key,JSON.stringify(value));if(cloudReady&&!applyingCloud){clearTimeout(cloudTimer);cloudTimer=setTimeout(syncCloud,250)}};
   const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const categoryInfo={
     Sekolah:{icon:'🎓',color:'var(--school)'},Konten:{icon:'🎬',color:'var(--content)'},
@@ -454,6 +459,8 @@
   window.addEventListener('appinstalled',()=>{installBanner.classList.remove('show');showStatus('Task Ku berhasil diinstall')});
   if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone&&!localStorage.getItem('pwaInstallDismissed'))setTimeout(()=>installBanner.classList.add('show'),1800);
 
+  function syncCloud(){cloudRef.set({tasks,routines,done,notes,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>showStatus('Sinkronisasi gagal. Periksa Firestore Rules.'))}
+  cloudRef.get().then(snapshot=>{if(snapshot.exists){const d=snapshot.data();applyingCloud=true;tasks=d.tasks||[];routines=d.routines||[];done=d.done||{};notes=d.notes||[];Object.entries({[KEYS.tasks]:tasks,[KEYS.routines]:routines,[KEYS.done]:done,[KEYS.notes]:notes}).forEach(([k,v])=>localStorage.setItem(k,JSON.stringify(v)));applyingCloud=false;renderAll()}else syncCloud();cloudReady=true;cloudRef.onSnapshot(snap=>{if(!snap.exists||snap.metadata.hasPendingWrites)return;const d=snap.data();applyingCloud=true;tasks=d.tasks||[];routines=d.routines||[];done=d.done||{};notes=d.notes||[];applyingCloud=false;renderAll()},()=>showStatus('Tidak dapat membaca Firestore. Periksa Rules.'))}).catch(()=>showStatus('Firestore belum dapat diakses. Data tetap lokal.'));
   renderAll();
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
