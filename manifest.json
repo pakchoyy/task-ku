@@ -2,8 +2,8 @@
   "name": "Task APK Choy",
   "short_name": "Task Choy",
   "description": "Agenda tugas dan jadwal harian Choy",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/task-ku/",
+  "scope": "/task-ku/",
   "display": "standalone",
   "background_color": "#F3F8FA",
   "theme_color": "#0F8B8D",
@@ -22,9 +22,11 @@
       "type": "image/png"
     }
   ],
-  "id": "./",
+  "id": "/task-ku/",
   "display_override": [
-    "window-controls-overlay",
     "standalone"
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
