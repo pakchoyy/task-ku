@@ -110,11 +110,11 @@
     .install-banner{display:none;position:fixed;left:16px;right:16px;bottom:92px;z-index:70;max-width:430px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgba(23,52,58,.2);padding:15px}
     .install-banner.show{display:block}.install-info{display:grid;grid-template-columns:48px 1fr;gap:11px;align-items:center;margin-bottom:12px}.install-icon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#17c9a2,#1390b5);display:grid;place-items:center;font-size:1.45rem}.install-info h3{font-size:.95rem;margin:0 0 3px}.install-info p{font-size:.78rem;color:var(--muted);margin:0}.install-actions{display:flex;gap:8px}.install-actions .primary{flex:1}
     .guide-overlay{position:fixed;inset:0;z-index:75;background:rgba(9,28,31,.48);display:none;align-items:flex-end;justify-content:center}.guide-overlay.open{display:flex}.guide-box{background:var(--surface);border-radius:22px 22px 0 0;width:min(100%,500px);padding:21px 20px calc(24px + env(safe-area-inset-bottom))}.guide-box h2{font-size:1.1rem;margin:0 0 4px}.guide-box>p{color:var(--muted);font-size:.82rem;margin:0 0 14px}.guide-step{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:10px 0}.guide-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.guide-step p{margin:2px 0 0;font-size:.86rem}
-    .nav-icon{display:block;font-size:1.45rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1.4rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
+    .nav-icon{display:block;font-size:1.15rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1.15rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
     @media(max-width:720px){
       .side{display:none}.app{margin:0}.topbar{padding:10px 13px}.page{padding:10px 11px 96px}
       .category-grid{gap:6px}.category-card{min-height:64px;padding-inline:3px}
-      .bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);inset:auto 0 0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+      .bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);inset:auto 0 0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
       .bottom-nav .nav-btn{display:grid;justify-items:center;gap:3px;color:var(--muted);padding:5px 4px;min-height:58px;font-size:.7rem}
       .bottom-nav .nav-btn.active{background:transparent;color:var(--accent)}
       .fab{right:16px;bottom:90px}.overlay{padding:0}.modal{border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
@@ -129,16 +129,17 @@
   <aside class="side">
     <div class="brand"><h1>Task Ku</h1><p>Agenda yang mengikuti harimu</p></div>
     <nav class="nav" aria-label="Navigasi utama">
-      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
       <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
-      <button class="nav-btn" data-page="schedule"><span class="nav-icon">🔁</span><span>Jadwal</span></button>
+      <button class="nav-btn" data-page="tasks"><span class="nav-icon">📝</span><span>Tugas</span></button>
+      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
+      <button class="nav-btn" data-page="routines"><span class="nav-icon">🔁</span><span>Harian</span></button>
       <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
     </nav>
     <div class="storage-note">Data tersimpan di perangkat ini.</div>
   </aside>
 
   <div class="app">
-    <header class="topbar"><div class="topbar-copy"><strong id="pageTitle">Hari ini</strong><span id="pageSubtitle">Lihat dan selesaikan rencana harian</span></div><button class="install-top-btn" id="installTop" type="button">📲 Install</button></header>
+    <header class="topbar"><div class="topbar-copy"><strong id="pageTitle">Hari ini</strong><span id="pageSubtitle">Lihat dan selesaikan rencana harian</span></div><button class="install-top-btn" id="installTop" type="button" aria-label="Install aplikasi">⬇ Install</button></header>
 
     <main>
       <section class="page active" id="page-today">
@@ -176,11 +177,15 @@
         </div>
       </section>
 
-      <section class="page" id="page-schedule">
-        <div class="section-head"><div><h2>Jadwal tugas</h2><span>Atur sekali, muncul otomatis pada hari pilihan</span></div><button class="primary" data-open-task>Tambah jadwal</button></div>
+      <section class="page" id="page-tasks">
+        <div class="section-head"><div><h2>Tugas</h2><span>Atur tugas berdasarkan tanggal atau hari</span></div><button class="primary" data-open-task>Tambah tugas</button></div>
         <div class="schedule-list" id="scheduleList"></div>
       </section>
 
+      <section class="page" id="page-routines">
+        <div class="section-head"><div><h2>Jadwal harian</h2><span>Rutinitas tanpa kategori dan tanggal</span></div><button class="primary" id="openRoutine">Tambah harian</button></div>
+        <div class="schedule-list" id="routineList"></div>
+      </section>
       <section class="page" id="page-notes">
         <div class="section-head"><div><h2>Catatan</h2><span>Simpan rincian panjang atau ide bebas</span></div><button class="primary" id="openNote">Tambah catatan</button></div>
         <div id="notesList"></div>
@@ -190,9 +195,10 @@
     <button class="fab" data-open-task>＋ Tambah tugas</button>
 
     <nav class="bottom-nav" aria-label="Navigasi utama seluler">
-      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
       <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
-      <button class="nav-btn" data-page="schedule"><span class="nav-icon">🔁</span><span>Jadwal</span></button>
+      <button class="nav-btn" data-page="tasks"><span class="nav-icon">📝</span><span>Tugas</span></button>
+      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
+      <button class="nav-btn" data-page="routines"><span class="nav-icon">🔁</span><span>Harian</span></button>
       <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
     </nav>
   </div>
@@ -240,6 +246,17 @@
   </form>
 </div>
 
+<div class="overlay" id="routineOverlay" aria-hidden="true">
+  <form class="modal" id="routineForm" role="dialog" aria-modal="true" aria-labelledby="routineModalTitle">
+    <div class="modal-head"><h2 id="routineModalTitle">Tambah jadwal harian</h2><button class="icon-btn" type="button" data-close-routine aria-label="Tutup formulir">×</button></div>
+    <label class="field">Nama kegiatan<input id="routineName" required autocomplete="off" placeholder="Contoh: Ngaji"></label>
+    <div class="kind-row"><label class="field">Jam mulai<input id="routineStart" type="time" required></label><label class="field">Jam selesai<input id="routineEnd" type="time" required></label></div>
+    <div class="field"><span>Pilih hari</span><button class="secondary" id="routineEveryDay" type="button">Pilih semua hari</button>
+      <div class="days"><label class="day-option"><input type="checkbox" name="routineDay" value="1"><span>Sen</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="2"><span>Sel</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="3"><span>Rab</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="4"><span>Kam</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="5"><span>Jum</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="6"><span>Sab</span></label><label class="day-option"><input type="checkbox" name="routineDay" value="0"><span>Min</span></label></div>
+    </div>
+    <div class="modal-actions"><button class="secondary" type="button" data-close-routine>Batal</button><button class="primary" type="submit">Simpan harian</button></div>
+  </form>
+</div>
 <div class="overlay" id="noteOverlay" aria-hidden="true">
   <form class="modal" id="noteForm" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
     <div class="modal-head"><h2 id="noteModalTitle">Tambah catatan</h2><button class="icon-btn" type="button" data-close-note aria-label="Tutup formulir">×</button></div>
@@ -252,7 +269,7 @@
 
 <script>
 (() => {
-  const KEYS={tasks:'taskku_schedules_v2',done:'taskku_daily_checks_v2',notes:'taskku_notes_v2'};
+  const KEYS={tasks:'taskku_schedules_v2',routines:'taskku_routines_v1',done:'taskku_daily_checks_v2',notes:'taskku_notes_v2'};
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const pad=n=>String(n).padStart(2,'0');
   const dateKey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -268,6 +285,7 @@
   let tasks=read(KEYS.tasks,null);
   let done=read(KEYS.done,{});
   let notes=read(KEYS.notes,null);
+  let routines=read(KEYS.routines,[]);
   if(!Array.isArray(tasks)){
     const oldTasks=read('taskku_tasks',[]);
     tasks=oldTasks.map(t=>({id:t.id||uid(),title:t.title||'Tugas',category:t.category||'Lainnya',time:t.time||'',kind:'once',days:[],date:t.date||dateKey(new Date())}));
@@ -279,6 +297,7 @@
   let calendarDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),1);
   let activeCategory=null;
   let editingTaskId=null;
+  let currentPage='today';
 
   if(!tasks.length){
     tasks=[
@@ -301,8 +320,8 @@
     $('#dayName').textContent=activeDate.toLocaleDateString('id-ID',{weekday:'long'});
     $('#dateLabel').textContent=activeDate.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
     const dayTasks=tasksFor(activeDate);
-    const routines=dayTasks.filter(t=>t.kind==='weekly'&&(t.days||[]).length===7);
-    const scheduled=dayTasks.filter(t=>!routines.includes(t));
+    const dailyItems=routines.filter(r=>(r.days||[]).includes(activeDate.getDay()));
+    const scheduled=dayTasks;
     const cats=['Sekolah','Konten','Rumah'];
     $('#categoryGrid').innerHTML=cats.map(cat=>{
       const info=categoryInfo[cat];
@@ -315,10 +334,11 @@
     $('#dailyHeading').textContent=activeCategory?activeCategory:'Tugas terjadwal';
     $('#dailyCount').textContent=shown.length+' tugas';
     $('#dailyTasks').innerHTML=shown.length?shown.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas terjadwal</strong>Pilih kategori lain atau tambahkan tugas baru.</div>';
-    const complete=dayTasks.filter(t=>isDone(t,activeDate)).length;
-    $('#progressText').textContent=complete+' dari '+dayTasks.length+' selesai';
-    const progress=$('.progress');progress.setAttribute('aria-valuemax',dayTasks.length);progress.setAttribute('aria-valuenow',complete);
-    $('#progressFill').style.width=(dayTasks.length?complete/dayTasks.length*100:0)+'%';
+    const allToday=[...dayTasks,...dailyItems];
+    const complete=allToday.filter(t=>isDone(t,activeDate)).length;
+    $('#progressText').textContent=complete+' dari '+allToday.length+' selesai';
+    const progress=$('.progress');progress.setAttribute('aria-valuemax',allToday.length);progress.setAttribute('aria-valuenow',complete);
+    $('#progressFill').style.width=(allToday.length?complete/allToday.length*100:0)+'%';
   }
 
   function taskHtml(t,date){
@@ -346,23 +366,25 @@
       const dots=count?'<span class="day-dots">'+Array.from({length:Math.min(count,3)},()=>'<i class="day-dot"></i>').join('')+(count>3?'<span class="day-more">+</span>':'')+'</span>':'<span class="day-dots"></span>';
       html+='<button class="'+cls+(d.getDay()===0?' sunday':'')+'" data-date="'+dateKey(d)+'" aria-label="'+d.toLocaleDateString('id-ID',{day:'numeric',month:'long'})+', '+count+' tugas"><strong>'+n+'</strong>'+dots+'</button>';
     }
-    $('#calendarDays').innerHTML=html;
+    $('#calendarDays').innerHTML=html;const selected=tasksFor(activeDate);$('#calendarTaskTitle').textContent='Tugas · '+activeDate.toLocaleDateString('id-ID',{day:'numeric',month:'long'});$('#calendarTaskCount').textContent=selected.length+' tugas';$('#calendarTaskList').innerHTML=selected.length?selected.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas</strong>Pilih tanggal lain.</div>';
   }
 
+  function routineHtml(r,date){const checked=isDone(r,date);return '<div class="task-row '+(checked?'done':'')+'"><input class="task-check" type="checkbox" data-routine-check="'+r.id+'" '+(checked?'checked':'')+'><span class="task-dot" style="background:var(--accent)"></span><div class="task-copy"><strong>'+escapeHtml(r.title)+'</strong><small>'+r.start+' – '+r.end+'</small></div><button class="row-btn danger" data-delete-routine="'+r.id+'">⌫</button></div>'}
+  function renderRoutines(){const names=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];$('#routineList').innerHTML=routines.length?routines.map(r=>'<article class="schedule-card"><span class="task-dot" style="background:var(--accent)"></span><div><h3>'+escapeHtml(r.title)+'</h3><p>'+r.start+' – '+r.end+' · '+r.days.map(d=>names[d]).join(', ')+'</p></div><button class="row-btn danger" data-delete-routine="'+r.id+'">⌫</button></article>').join(''):'<div class="panel empty"><strong>Belum ada jadwal harian</strong>Tambahkan kegiatan dan pilih harinya.</div>'}
   function renderNotes(){
     $('#notesList').innerHTML=notes.length?notes.map(n=>'<article class="note-card"><div class="section-head"><h3>'+escapeHtml(n.title)+'</h3><button class="row-btn danger" data-delete-note="'+n.id+'" aria-label="Hapus '+escapeHtml(n.title)+'">⌫</button></div><p>'+escapeHtml(n.content||'Catatan kosong')+'</p></article>').join(''):'<div class="panel empty"><strong>Belum ada catatan</strong>Simpan rincian panjang yang tidak cocok menjadi checklist.</div>';
   }
 
-  function renderAll(){renderToday();renderSchedule();renderCalendar();renderNotes()}
+  function renderAll(){renderToday();renderSchedule();renderRoutines();renderCalendar();renderNotes()}
   function moveDay(amount){activeDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),activeDate.getDate()+amount);activeCategory=null;renderToday()}
 
   function showPage(name){
     $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));
     $$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
-    const labels={today:['Hari ini','Lihat dan selesaikan rencana harian'],calendar:['Kalender','Pilih tanggal untuk melihat tugas'],schedule:['Jadwal','Atur tugas sekali untuk hari pilihan'],notes:['Catatan','Simpan rincian dan ide bebas']};
+    currentPage=name;const labels={calendar:['Kalender','Pilih tanggal dan lihat tugasnya'],tasks:['Tugas','Atur tugas berdasarkan kategori'],today:['Hari ini','Lihat semua rencana hari ini'],routines:['Harian','Atur jadwal berulang'],notes:['Catatan','Simpan rincian dan ide bebas']};
     $('#pageTitle').textContent=labels[name][0];$('#pageSubtitle').textContent=labels[name][1];
-    $('.fab').hidden=name==='notes';
-    if(name==='calendar')renderCalendar();if(name==='schedule')renderSchedule();if(name==='notes')renderNotes();
+    $('.fab').hidden=name==='notes'||name==='calendar';$('.fab').textContent=name==='routines'?'＋ Tambah harian':'＋ Tambah tugas';
+    if(name==='calendar')renderCalendar();if(name==='tasks')renderSchedule();if(name==='routines')renderRoutines();if(name==='notes')renderNotes();
   }
 
   function openTask(task){
@@ -383,13 +405,15 @@
   $('#categoryGrid').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=activeCategory===b.dataset.category?null:b.dataset.category;renderToday()});
   function handleDailyCheck(e){if(!e.target.dataset.check)return;const task=tasks.find(t=>t.id===e.target.dataset.check);if(task){setDone(task,activeDate,e.target.checked);renderToday()}}
   $('#dailyTasks').addEventListener('change',handleDailyCheck);
-  $('#dailyRoutines').addEventListener('change',handleDailyCheck);
+  $('#dailyRoutines').addEventListener('change',e=>{if(e.target.dataset.routineCheck){const r=routines.find(x=>x.id===e.target.dataset.routineCheck);setDone(r,activeDate,e.target.checked);renderToday()}});
+  $('#calendarTaskList').addEventListener('change',handleDailyCheck);
   document.addEventListener('click',e=>{
     const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
     if(edit)openTask(tasks.find(t=>t.id===edit.dataset.edit));
     if(del&&confirm('Hapus tugas ini?')){tasks=tasks.filter(t=>t.id!==del.dataset.delete);write(KEYS.tasks,tasks);renderAll();showStatus('Tugas dihapus')}
   });
-  $$('[data-open-task]').forEach(b=>b.addEventListener('click',()=>openTask()));
+  $('[data-open-task]').forEach(b=>b.addEventListener('click',()=>openTask()));
+  $('#mainFab').addEventListener('click',()=>currentPage==='routines'?openRoutine():openTask());
   $$('[data-close-task]').forEach(b=>b.addEventListener('click',closeTask));
   $('#selectEveryDay').addEventListener('click',()=>{$$('input[name="weekDay"]').forEach(c=>c.checked=true)});
   $$('input[name="taskKind"]').forEach(r=>r.addEventListener('change',toggleKind));
@@ -403,8 +427,9 @@
   });
   $('#prevMonth').addEventListener('click',()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()-1,1);renderCalendar()});
   $('#nextMonth').addEventListener('click',()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()+1,1);renderCalendar()});
-  $('#calendarDays').addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;activeDate=parseDate(b.dataset.date);activeCategory=null;showPage('today');renderToday()});
+  $('#calendarDays').addEventListener('click',e=>{const b=e.target.closest('[data-date]');if(!b)return;activeDate=parseDate(b.dataset.date);activeCategory=null;renderCalendar()});
 
+  function openRoutine(){$('#routineForm').reset();$('#routineOverlay').classList.add('open')}function closeRoutine(){$('#routineOverlay').classList.remove('open')}$('#openRoutine').addEventListener('click',openRoutine);$('[data-close-routine]').forEach(b=>b.addEventListener('click',closeRoutine));$('#routineEveryDay').addEventListener('click',()=>$('input[name="routineDay"]').forEach(c=>c.checked=true));$('#routineForm').addEventListener('submit',e=>{e.preventDefault();const days=$('input[name="routineDay"]:checked').map(c=>Number(c.value));if(!days.length){showStatus('Pilih minimal satu hari');return}routines.push({id:uid(),title:$('#routineName').value.trim(),start:$('#routineStart').value,end:$('#routineEnd').value,days});write(KEYS.routines,routines);closeRoutine();renderAll()});
   $('#openNote').addEventListener('click',()=>{$('#noteForm').reset();$('#noteOverlay').classList.add('open');$('#noteOverlay').setAttribute('aria-hidden','false');setTimeout(()=>$('#noteTitle').focus(),50)});
   $$('[data-close-note]').forEach(b=>b.addEventListener('click',()=>{$('#noteOverlay').classList.remove('open');$('#noteOverlay').setAttribute('aria-hidden','true')}));
   $('#noteForm').addEventListener('submit',e=>{e.preventDefault();notes.unshift({id:uid(),title:$('#noteTitle').value.trim(),content:$('#noteContent').value.trim()});write(KEYS.notes,notes);$('#noteOverlay').classList.remove('open');renderNotes();showStatus('Catatan disimpan')});
@@ -415,7 +440,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTask();$('#noteOverlay').classList.remove('open')}});
   let deferredPrompt=null;
   const installBanner=$('#installBanner'),installGuide=$('#installGuide');
-  $('#installTop').addEventListener('click',()=>installBanner.classList.add('show'));
+  $('#installTop').addEventListener('click',()=>$('#installNow').click());
   $('#installLater').addEventListener('click',()=>{installBanner.classList.remove('show');localStorage.setItem('pwaInstallDismissed','1')});
   function closeInstallGuide(){installGuide.classList.remove('open')}
   $('#closeGuide').addEventListener('click',closeInstallGuide);$('#understandGuide').addEventListener('click',closeInstallGuide);
