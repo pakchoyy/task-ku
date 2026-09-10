@@ -31,7 +31,7 @@
     .nav-btn.active{background:rgba(255,255,255,.18);color:#fff}
     .storage-note{margin-top:auto;padding:14px 10px 0;font-size:.75rem;opacity:.65}
     .app{margin-inline-start:230px;min-height:100vh}
-    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(216,231,233,.9);padding:14px 22px}
+    .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(216,231,233,.9);padding:14px 22px;display:flex;align-items:center;gap:12px}.topbar-copy{flex:1}.install-top-btn{border:0;border-radius:11px;background:var(--accent-soft);color:var(--accent);min-height:42px;padding:0 13px;font-weight:800;white-space:nowrap}
     .topbar strong{font-size:1rem}
     .topbar span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px}
     .page{display:none;max-width:920px;margin:auto;padding:20px 22px 110px}
@@ -57,8 +57,8 @@
     .section-head h2,.section-head h3{margin:0}
     .section-head h2{font-size:1.1rem}.section-head h3{font-size:1rem}
     .section-head span{color:var(--muted);font-size:.75rem}
-    .task-row{display:grid;grid-template-columns:28px 10px 1fr auto;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:13px 0}
-    .task-row:last-child{border-bottom:0}
+    .task-row{display:grid;grid-template-columns:28px 10px 1fr auto;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 12px;margin-bottom:9px;transition:transform .15s,box-shadow .15s}.task-section+.task-section{margin-top:18px}.daily-panel{background:linear-gradient(145deg,#ffffff,#effaf8);border:1px solid #cde9e5}.daily-panel .task-row{background:#fff}
+    .task-row:last-child{margin-bottom:0}
     .task-check{width:22px;height:22px;accent-color:var(--accent)}
     .task-dot{width:9px;height:9px;border-radius:50%}
     .task-copy{min-width:0}
@@ -107,14 +107,17 @@
     .status{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--text);color:var(--surface);padding:11px 16px;border-radius:12px;z-index:80;display:none}
     .status.show{display:block}
     .bottom-nav{display:none}
-    @media(hover:hover){button:hover{filter:brightness(.97)}}
+    .install-banner{display:none;position:fixed;left:16px;right:16px;bottom:92px;z-index:70;max-width:430px;margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgba(23,52,58,.2);padding:15px}
+    .install-banner.show{display:block}.install-info{display:grid;grid-template-columns:48px 1fr;gap:11px;align-items:center;margin-bottom:12px}.install-icon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#17c9a2,#1390b5);display:grid;place-items:center;font-size:1.45rem}.install-info h3{font-size:.95rem;margin:0 0 3px}.install-info p{font-size:.78rem;color:var(--muted);margin:0}.install-actions{display:flex;gap:8px}.install-actions .primary{flex:1}
+    .guide-overlay{position:fixed;inset:0;z-index:75;background:rgba(9,28,31,.48);display:none;align-items:flex-end;justify-content:center}.guide-overlay.open{display:flex}.guide-box{background:var(--surface);border-radius:22px 22px 0 0;width:min(100%,500px);padding:21px 20px calc(24px + env(safe-area-inset-bottom))}.guide-box h2{font-size:1.1rem;margin:0 0 4px}.guide-box>p{color:var(--muted);font-size:.82rem;margin:0 0 14px}.guide-step{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:10px 0}.guide-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.guide-step p{margin:2px 0 0;font-size:.86rem}
+    .nav-icon{display:block;font-size:1.45rem;line-height:1}.bottom-nav .nav-btn{font-size:.74rem}.bottom-nav .nav-btn .nav-icon{font-size:1.55rem}    @media(hover:hover){button:hover{filter:brightness(.97)}.task-row:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(30,79,88,.08)}}
     @media(max-width:720px){
       .side{display:none}.app{margin:0}.topbar{padding:12px 15px}.page{padding:14px 14px 100px}
       .category-grid{gap:7px}.category-card{min-height:76px;padding-inline:4px}
       .bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);inset:auto 0 0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:30;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-      .bottom-nav .nav-btn{display:grid;justify-items:center;gap:1px;color:var(--muted);padding:4px;min-height:52px;font-size:.7rem}
+      .bottom-nav .nav-btn{display:grid;justify-items:center;gap:3px;color:var(--muted);padding:5px 4px;min-height:62px;font-size:.74rem}
       .bottom-nav .nav-btn.active{background:transparent;color:var(--accent)}
-      .fab{right:16px;bottom:78px}.overlay{padding:0}.modal{border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+      .fab{right:16px;bottom:90px}.overlay{padding:0}.modal{border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
       .calendar-grid{gap:3px}.day{min-height:54px}.row-actions{display:none}
     }
     @media(max-width:350px){.category-card small{display:none}.page{padding-inline:10px}.days{gap:3px}}
@@ -126,16 +129,16 @@
   <aside class="side">
     <div class="brand"><h1>Task Ku</h1><p>Agenda yang mengikuti harimu</p></div>
     <nav class="nav" aria-label="Navigasi utama">
-      <button class="nav-btn active" data-page="today">✓ <span>Hari ini</span></button>
-      <button class="nav-btn" data-page="calendar">▦ <span>Kalender</span></button>
-      <button class="nav-btn" data-page="schedule">↻ <span>Jadwal</span></button>
-      <button class="nav-btn" data-page="notes">≡ <span>Catatan</span></button>
+      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
+      <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
+      <button class="nav-btn" data-page="schedule"><span class="nav-icon">🔁</span><span>Jadwal</span></button>
+      <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
     </nav>
     <div class="storage-note">Data tersimpan di perangkat ini.</div>
   </aside>
 
   <div class="app">
-    <header class="topbar"><strong id="pageTitle">Hari ini</strong><span id="pageSubtitle">Lihat dan selesaikan rencana harian</span></header>
+    <header class="topbar"><div class="topbar-copy"><strong id="pageTitle">Hari ini</strong><span id="pageSubtitle">Lihat dan selesaikan rencana harian</span></div><button class="install-top-btn" id="installTop" type="button">📲 Install</button></header>
 
     <main>
       <section class="page active" id="page-today">
@@ -151,8 +154,12 @@
           <div class="progress" role="progressbar" aria-label="Progres tugas harian" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><span id="progressFill"></span></div>
         </div>
         <div class="category-grid" id="categoryGrid" aria-label="Filter kategori"></div>
-        <section class="panel">
-          <div class="section-head"><h2 id="dailyHeading">Semua tugas</h2><span id="dailyCount"></span></div>
+        <section class="panel daily-panel task-section">
+          <div class="section-head"><div><h2>☀️ Tugas harian</h2><span>Rutinitas yang muncul setiap hari</span></div><span id="routineCount"></span></div>
+          <div id="dailyRoutines"></div>
+        </section>
+        <section class="panel task-section">
+          <div class="section-head"><h2 id="dailyHeading">Tugas terjadwal</h2><span id="dailyCount"></span></div>
           <div id="dailyTasks"></div>
         </section>
       </section>
@@ -183,14 +190,28 @@
     <button class="fab" data-open-task>＋ Tambah tugas</button>
 
     <nav class="bottom-nav" aria-label="Navigasi utama seluler">
-      <button class="nav-btn active" data-page="today">✓<span>Hari ini</span></button>
-      <button class="nav-btn" data-page="calendar">▦<span>Kalender</span></button>
-      <button class="nav-btn" data-page="schedule">↻<span>Jadwal</span></button>
-      <button class="nav-btn" data-page="notes">≡<span>Catatan</span></button>
+      <button class="nav-btn active" data-page="today"><span class="nav-icon">☀️</span><span>Hari ini</span></button>
+      <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>Kalender</span></button>
+      <button class="nav-btn" data-page="schedule"><span class="nav-icon">🔁</span><span>Jadwal</span></button>
+      <button class="nav-btn" data-page="notes"><span class="nav-icon">✏️</span><span>Catatan</span></button>
     </nav>
   </div>
 </div>
 
+<div class="install-banner" id="installBanner">
+  <div class="install-info"><div class="install-icon">📋</div><div><h3>Install Task Ku</h3><p>Buka langsung dari layar utama seperti aplikasi.</p></div></div>
+  <div class="install-actions"><button class="primary" id="installNow" type="button">📲 Install sekarang</button><button class="secondary" id="installLater" type="button">Nanti</button></div>
+</div>
+<div class="guide-overlay" id="installGuide">
+  <div class="guide-box" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <div class="modal-head"><h2 id="guideTitle">📲 Cara install di HP</h2><button class="icon-btn" id="closeGuide" type="button" aria-label="Tutup panduan">×</button></div>
+    <p>Pilih cara sesuai perangkat yang digunakan.</p>
+    <div class="guide-step"><span class="guide-num">1</span><p>Buka Task Ku di <strong>Chrome</strong> pada Android atau <strong>Safari</strong> pada iPhone.</p></div>
+    <div class="guide-step"><span class="guide-num">2</span><p>Android: tekan menu ⋮ lalu pilih <strong>Tambahkan ke layar utama</strong>. iPhone: tekan Bagikan lalu pilih <strong>Add to Home Screen</strong>.</p></div>
+    <div class="guide-step"><span class="guide-num">3</span><p>Tekan <strong>Tambahkan</strong>. Ikon Task Ku akan muncul di layar utama.</p></div>
+    <button class="primary" id="understandGuide" type="button" style="width:100%;margin-top:10px">Mengerti</button>
+  </div>
+</div>
 <div class="overlay" id="taskOverlay" aria-hidden="true">
   <form class="modal" id="taskForm" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
     <div class="modal-head"><h2 id="taskModalTitle">Tambah tugas</h2><button class="icon-btn" type="button" data-close-task aria-label="Tutup formulir">×</button></div>
@@ -203,7 +224,7 @@
         <label class="kind-option"><input type="radio" name="taskKind" value="once"><span>Satu tanggal</span></label>
       </div>
     </div>
-    <div class="field" id="weekDaysField"><span>Pilih hari</span>
+    <div class="field" id="weekDaysField"><span>Pilih hari</span><button class="secondary" id="selectEveryDay" type="button">Pilih semua hari</button>
       <div class="days">
         <label class="day-option"><input type="checkbox" name="weekDay" value="1"><span>Sen</span></label>
         <label class="day-option"><input type="checkbox" name="weekDay" value="2"><span>Sel</span></label>
@@ -280,16 +301,20 @@
     $('#dayName').textContent=activeDate.toLocaleDateString('id-ID',{weekday:'long'});
     $('#dateLabel').textContent=activeDate.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
     const dayTasks=tasksFor(activeDate);
-    const cats=[...new Set(dayTasks.map(t=>t.category))];
-    $('#categoryGrid').innerHTML=cats.length?cats.map(cat=>{
-      const info=categoryInfo[cat]||categoryInfo.Lainnya;
-      const count=dayTasks.filter(t=>t.category===cat).length;
-      return '<button class="category-card '+(activeCategory===cat?'active':'')+'" data-category="'+escapeHtml(cat)+'" aria-pressed="'+(activeCategory===cat)+'"><span class="emoji">'+info.icon+'</span><strong>'+escapeHtml(cat)+'</strong><small>'+count+' tugas</small></button>';
-    }).join(''):'<div class="empty" style="grid-column:1/-1"><strong>Belum ada kategori hari ini</strong>Tambahkan jadwal untuk hari ini.</div>';
-    const shown=activeCategory?dayTasks.filter(t=>t.category===activeCategory):dayTasks;
-    $('#dailyHeading').textContent=activeCategory||'Semua tugas';
+    const routines=dayTasks.filter(t=>t.kind==='weekly'&&(t.days||[]).length===7);
+    const scheduled=dayTasks.filter(t=>!routines.includes(t));
+    const cats=['Sekolah','Konten','Rumah'];
+    $('#categoryGrid').innerHTML=cats.map(cat=>{
+      const info=categoryInfo[cat];
+      const count=scheduled.filter(t=>t.category===cat).length;
+      return '<button class="category-card '+(activeCategory===cat?'active':'')+'" data-category="'+cat+'" aria-pressed="'+(activeCategory===cat)+'"><span class="emoji">'+info.icon+'</span><strong>'+cat+'</strong><small>'+count+' tugas</small></button>';
+    }).join('');
+    $('#routineCount').textContent=routines.length+' tugas';
+    $('#dailyRoutines').innerHTML=routines.length?routines.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Belum ada rutinitas harian</strong>Buat jadwal dan pilih semua hari.</div>';
+    const shown=activeCategory?scheduled.filter(t=>t.category===activeCategory):scheduled;
+    $('#dailyHeading').textContent=activeCategory?activeCategory:'Tugas terjadwal';
     $('#dailyCount').textContent=shown.length+' tugas';
-    $('#dailyTasks').innerHTML=shown.length?shown.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas</strong>Pilih kategori lain atau tambahkan tugas baru.</div>';
+    $('#dailyTasks').innerHTML=shown.length?shown.map(t=>taskHtml(t,activeDate)).join(''):'<div class="empty"><strong>Tidak ada tugas terjadwal</strong>Pilih kategori lain atau tambahkan tugas baru.</div>';
     const complete=dayTasks.filter(t=>isDone(t,activeDate)).length;
     $('#progressText').textContent=complete+' dari '+dayTasks.length+' selesai';
     const progress=$('.progress');progress.setAttribute('aria-valuemax',dayTasks.length);progress.setAttribute('aria-valuenow',complete);
@@ -355,7 +380,9 @@
   $('#prevDay').addEventListener('click',()=>moveDay(-1));$('#nextDay').addEventListener('click',()=>moveDay(1));
   $('#openCalendar').addEventListener('click',()=>{calendarDate=new Date(activeDate.getFullYear(),activeDate.getMonth(),1);showPage('calendar')});
   $('#categoryGrid').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=activeCategory===b.dataset.category?null:b.dataset.category;renderToday()});
-  $('#dailyTasks').addEventListener('change',e=>{if(!e.target.dataset.check)return;const task=tasks.find(t=>t.id===e.target.dataset.check);if(task){setDone(task,activeDate,e.target.checked);renderToday()}});
+  function handleDailyCheck(e){if(!e.target.dataset.check)return;const task=tasks.find(t=>t.id===e.target.dataset.check);if(task){setDone(task,activeDate,e.target.checked);renderToday()}}
+  $('#dailyTasks').addEventListener('change',handleDailyCheck);
+  $('#dailyRoutines').addEventListener('change',handleDailyCheck);
   document.addEventListener('click',e=>{
     const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');
     if(edit)openTask(tasks.find(t=>t.id===edit.dataset.edit));
@@ -363,6 +390,7 @@
   });
   $$('[data-open-task]').forEach(b=>b.addEventListener('click',()=>openTask()));
   $$('[data-close-task]').forEach(b=>b.addEventListener('click',closeTask));
+  $('#selectEveryDay').addEventListener('click',()=>{$$('input[name="weekDay"]').forEach(c=>c.checked=true)});
   $$('input[name="taskKind"]').forEach(r=>r.addEventListener('change',toggleKind));
   $('#taskForm').addEventListener('submit',e=>{
     e.preventDefault();const kind=$('input[name="taskKind"]:checked').value;
@@ -384,6 +412,22 @@
   let startX=0;$('#dateSwipe').addEventListener('pointerdown',e=>startX=e.clientX);$('#dateSwipe').addEventListener('pointerup',e=>{const dx=e.clientX-startX;if(Math.abs(dx)>48)moveDay(dx>0?-1:1)});
   [$('#taskOverlay'),$('#noteOverlay')].forEach(o=>o.addEventListener('click',e=>{if(e.target===o){if(o.id==='taskOverlay')closeTask();else o.classList.remove('open')}}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTask();$('#noteOverlay').classList.remove('open')}});
+  let deferredPrompt=null;
+  const installBanner=$('#installBanner'),installGuide=$('#installGuide');
+  $('#installTop').addEventListener('click',()=>installBanner.classList.add('show'));
+  $('#installLater').addEventListener('click',()=>{installBanner.classList.remove('show');localStorage.setItem('pwaInstallDismissed','1')});
+  function closeInstallGuide(){installGuide.classList.remove('open')}
+  $('#closeGuide').addEventListener('click',closeInstallGuide);$('#understandGuide').addEventListener('click',closeInstallGuide);
+  installGuide.addEventListener('click',e=>{if(e.target===installGuide)closeInstallGuide()});
+  $('#installNow').addEventListener('click',async()=>{
+    installBanner.classList.remove('show');
+    if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}
+    else installGuide.classList.add('open');
+  });
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('pwaInstallDismissed'))setTimeout(()=>installBanner.classList.add('show'),1800)});
+  window.addEventListener('appinstalled',()=>{installBanner.classList.remove('show');showStatus('Task Ku berhasil diinstall')});
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone&&!localStorage.getItem('pwaInstallDismissed'))setTimeout(()=>installBanner.classList.add('show'),1800);
+
   renderAll();
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
