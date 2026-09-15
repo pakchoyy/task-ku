@@ -1,7 +1,7 @@
 {
-  "name": "Task APK Choy",
-  "short_name": "Task Choy",
-  "description": "Agenda tugas dan jadwal harian Choy",
+  "name": "Task Pak Choy",
+  "short_name": "Task Pak Choy",
+  "description": "Agenda tugas dan jadwal harian Pak Choy",
   "start_url": "/task-ku/",
   "scope": "/task-ku/",
   "display": "standalone",
