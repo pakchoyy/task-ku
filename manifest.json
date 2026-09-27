@@ -2,8 +2,8 @@
   "name": "Task Pak Choy",
   "short_name": "Task Pak Choy",
   "description": "Agenda tugas dan jadwal harian Pak Choy",
-  "start_url": "/task-ku/",
-  "scope": "/task-ku/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#F3F8FA",
   "theme_color": "#0F8B8D",
@@ -22,7 +22,7 @@
       "type": "image/png"
     }
   ],
-  "id": "/task-ku/",
+  "id": "./",
   "display_override": [
     "standalone"
   ],
